@@ -1,0 +1,15 @@
+.exemplo-id {
+    font-size: 14px;
+    color: #666;
+}
+
+.imagem {
+    display: block;
+
+    width: 100%;
+    height: 240px;
+
+    margin-bottom: 20px;
+
+    object-fit: contain;
+}
