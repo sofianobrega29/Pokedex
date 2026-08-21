@@ -1,7 +1,4 @@
-.exemplo-id {
-    font-size: 14px;
-    color: #666;
-}
+
 
 .imagem {
     display: block;
@@ -12,4 +9,23 @@
     margin-bottom: 20px;
 
     object-fit: contain;
+}
+
+/*cabeçalho*/
+.web {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 15px 30px;
+   background-color: #ffffff;
+   border-bottom: 2px solid #ddd
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
 }
