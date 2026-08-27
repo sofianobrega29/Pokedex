@@ -29,4 +29,11 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
+    background: linear-gradient(135deg, #ff6b00, #ff8800);
+    color: #ffffff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, bow-shadow 0.2 ease;
 }
