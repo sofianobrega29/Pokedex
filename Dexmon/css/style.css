@@ -7,7 +7,7 @@
 
 body {
     background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
-                url('fundo.png') no-repeat center center fixed;
+                url('../imagens/fundo.png') no-repeat center center fixed;
     background-size: cover;
     color: #2c3e50;
     min-height: 100vh;
@@ -40,6 +40,26 @@ body {
     color: #ffffff;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
     margin-bottom: 12px;
+}
+
+.filters-section {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 15px 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+}
+
+.filters-section h2 {
+    color: #2d3748;
+    text-shadow: none;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-left: 2px solid #2d3748;
+    padding: 25px 15px;
 }
 
 .digimon {
@@ -230,5 +250,14 @@ body {
     transform: translateX(3px);
 }
 
-
+.footer {
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-top: 2px solid #2d3748;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #4a5568;
+    font-weight: 600;
+}
 
