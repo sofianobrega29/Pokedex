@@ -6,9 +6,40 @@
 }
 
 body {
-    background-color: #f4f5f8;
+    background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+                url('fundo.png') no-repeat center center fixed;
+    background-size: cover;
     color: #2c3e50;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 30px;
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.hidden {
+    display: none;
+}
+
+.filters-section h2,
+.featured-section h2,
+.cards-section h2 {
+    font-size: 1.3rem;
+    color: #ffffff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    margin-bottom: 12px;
 }
 
 .digimon {
