@@ -1,0 +1,108 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #14385e;
+    font-family: Arial, sans-serif;
+}
+
+/* Card principal */
+.fundo {
+    position: relative;
+    width: 80%;
+    height: 80%;
+    background-color: rgb(220, 229, 255);
+    border-radius: 20px;
+    padding: 30px;
+    box-sizing: border-box;
+    box-shadow: 0 0 50px 50px rgba(0, 0, 0, 0.25);
+}
+
+/* Nome do Digimon */
+.fundo h1 {
+    margin: 0;
+    width: 55%;
+    font-size: 40px;
+}
+
+/* Espaço para a imagem */
+.imagem-digimon {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 35%;
+    height: 45%;
+    border: 3px solid #14385e;
+    border-radius: 15px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+}
+
+/* Imagem do Digimon */
+.imagem-digimon img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Área das informações */
+.informacoes {
+    display: flex;
+    gap: 20px;
+    width: 55%;
+    margin-top: 40px;
+}
+
+/* Cada informação */
+.campo {
+    width: 30%;
+    padding: 10px;
+    border: 2px solid #14385e;
+    border-radius: 10px;
+}
+
+/* Títulos dos campos */
+.campo h2,
+.descricao h2,
+.habilidade h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+/* Textos */
+.campo p,
+.descricao p,
+.habilidade p {
+    margin: 0;
+}
+
+/* Área de descrição */
+.descricao {
+    position: absolute;
+    left: 30px;
+    bottom: 30px;
+    width: 52%;
+    padding: 15px;
+    border: 2px solid #14385e;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Área de habilidade */
+.habilidade {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    width: 35%;
+    padding: 15px;
+    border: 2px solid #14385e;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
