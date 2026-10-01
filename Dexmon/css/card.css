@@ -1,28 +1,21 @@
 body {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: Arial, sans-serif;
-}
-
-body {
     background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
                 url('../imagens/fundo.png') no-repeat center center fixed;
     background-size: cover;
     color: #2c3e50;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
-/* Card principal */
 .fundo {
     position: relative;
     width: 80%;
     height: 80%;
-    background-color: rgb(255, 255, 255);
+    background-color: white;
     border-radius: 15px;
     padding: 30px;
     box-sizing: border-box;
@@ -30,7 +23,6 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Nome do Digimon */
 .fundo h1 {
     margin: 0;
     width: 55%;
@@ -39,10 +31,9 @@ body {
 
 .fundo:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 60px rgba (0, 0, 0, 0.4);
+    box-shadow: 0 10px 60px rgba(0, 0, 0, 0.4);
 }
 
-/* Espaço para a imagem */
 .imagem-digimon {
     position: absolute;
     top: 30px;
@@ -54,7 +45,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
     overflow: hidden;
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -65,15 +55,12 @@ body {
     box-shadow: 0 0 15px rgba(255, 107, 0, 0.5);
 }
 
-/* Imagem do Digimon */
 .imagem-digimon img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    transition: transform 0.3s ease;
 }
 
-/* Área das informações */
 .informacoes {
     display: flex;
     gap: 20px;
@@ -81,7 +68,6 @@ body {
     margin-top: 40px;
 }
 
-/* Cada informação */
 .campo {
     width: 30%;
     padding: 10px;
@@ -89,7 +75,6 @@ body {
     border-radius: 10px;
 }
 
-/* Títulos dos campos */
 .campo h2,
 .descricao h2,
 .habilidade h2 {
@@ -97,14 +82,12 @@ body {
     font-size: 18px;
 }
 
-/* Textos */
 .campo p,
 .descricao p,
 .habilidade p {
     margin: 0;
 }
 
-/* Área de descrição */
 .descricao {
     position: absolute;
     left: 30px;
@@ -116,7 +99,6 @@ body {
     box-sizing: border-box;
 }
 
-/* Área de habilidade */
 .habilidade {
     position: absolute;
     right: 30px;
@@ -127,4 +109,36 @@ body {
     border-radius: 10px;
     box-sizing: border-box;
 }
+
+.botao {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 55px;
+    height: 55px;
+    border: none;
+    border-radius: 50%;
+    background-color: #14385e;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.botao:hover {
+    background-color: #ff6b00;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.anterior {
+    left: -30px;
+}
+
+.proximo {
+    right: -30px;
+}
+
 
