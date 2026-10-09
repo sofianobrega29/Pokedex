@@ -1,53 +1,52 @@
-// javascript/dados.js
 const digimonsExemplo = [
     {
         id: 1,
-        nome: "Agumon",
-        tipo: "Reptile",
-        nivel: "Rookie",
-        atributo: "Vaccine",
-        imagem: "https://digi-api.com/images/digimon/w/Agumon.png",
-        descricao: "Um Digimon réptil bípede que evoluiu e aprendeu a andar sobre duas patas. É corajoso e destemido.",
-        habilidades: "Pepper Breath; Claw Attack"
+        name: "Agumon",
+        types: [{ type: "Reptile" }],
+        levels: [{ level: "Rookie" }],
+        attributes: [{ attribute: "Vaccine" }],
+        images: [{ href: "https://digi-api.com/images/digimon/w/Agumon.png" }],
+        descriptions: [{ description: "Um Digimon réptil bípede que evoluiu e aprendeu a andar sobre duas patas. É corajoso e destemido." }],
+        skills: [{ skill: "Pepper Breath" }, { skill: "Claw Attack" }]
     },
     {
         id: 2,
-        nome: "Gabumon",
-        tipo: "Reptile",
-        nivel: "Rookie",
-        atributo: "Data",
-        imagem: "https://digi-api.com/images/digimon/w/Gabumon.png",
-        descricao: "Embora esteja coberto por uma pele de furão, é um Digimon réptil bastante tímido e reservado.",
-        habilidades: "Blue Blaster; Horn Attack"
+        name: "Gabumon",
+        types: [{ type: "Reptile" }],
+        levels: [{ level: "Rookie" }],
+        attributes: [{ attribute: "Data" }],
+        images: [{ href: "https://digi-api.com/images/digimon/w/Gabumon.png" }],
+        descriptions: [{ description: "Embora esteja coberto por uma pele de furão, é um Digimon réptil bastante tímido e reservado." }],
+        skills: [{ skill: "Blue Blaster" }, { skill: "Horn Attack" }]
     },
     {
         id: 3,
-        nome: "Patamon",
-        tipo: "Mammal",
-        nivel: "Rookie",
-        atributo: "Data",
-        imagem: "https://digi-api.com/images/digimon/w/Patamon.png",
-        descricao: "Caracterizado por suas orelhas grandes que parecem asas, este Digimon mamífero é muito carismático.",
-        habilidades: "Boom Bubble; Slamming Attack"
+        name: "Patamon",
+        types: [{ type: "Mammal" }],
+        levels: [{ level: "Rookie" }],
+        attributes: [{ attribute: "Data" }],
+        images: [{ href: "https://digi-api.com/images/digimon/w/Patamon.png" }],
+        descriptions: [{ description: "Caracterizado por suas orelhas grandes que parecem asas, este Digimon mamífero é muito carismático." }],
+        skills: [{ skill: "Boom Bubble" }, { skill: "Slamming Attack" }]
     },
     {
         id: 4,
-        nome: "Gatomon",
-        tipo: "Demon Beast",
-        nivel: "Champion",
-        atributo: "Vaccine",
-        imagem: "https://digi-api.com/images/digimon/w/Gatomon.png",
-        descricao: "Possui uma curiosidade muito forte e adora travessuras. Apesar de pequeno, é um Digimon de nível Campeão.",
-        habilidades: "Lightning Paw; Cat's Eye"
+        name: "Gatomon",
+        types: [{ type: "Demon Beast" }],
+        levels: [{ level: "Champion" }],
+        attributes: [{ attribute: "Vaccine" }],
+        images: [{ href: "https://digi-api.com/images/digimon/w/Gatomon.png" }],
+        descriptions: [{ description: "Possui uma curiosidade muito forte e adora travessuras. Apesar de pequeno, é um Digimon de nível Campeão." }],
+        skills: [{ skill: "Lightning Paw" }, { skill: "Cat's Eye" }]
     },
     {
         id: 5,
-        nome: "Veemon",
-        tipo: "Dragon",
-        nivel: "Rookie",
-        atributo: "Free",
-        imagem: "https://digi-api.com/images/digimon/w/Veemon.png",
-        descricao: "Uma espécie de Digimon dragão recém-descoberta que possui uma força física incrível.",
-        habilidades: "V-Headbutt; Vee Laser"
+        name: "Veemon",
+        types: [{ type: "Dragon" }],
+        levels: [{ level: "Rookie" }],
+        attributes: [{ attribute: "Free" }],
+        images: [{ href: "https://digi-api.com/images/digimon/w/Veemon.png" }],
+        descriptions: [{ description: "Uma espécie de Digimon dragão recém-descoberta que possui uma força física incrível." }],
+        skills: [{ skill: "V-Headbutt" }, { skill: "Vee Laser" }]
     }
 ];
