@@ -1,6 +1,6 @@
 // javascript/script.js
 
-// --- 1. Controle do Menu Lateral ---
+// 1. Controle do Menu Lateral
 const menu = document.querySelector(".barra");
 const btnMenu = document.getElementById("btn-menu");
 
@@ -10,7 +10,7 @@ if (btnMenu && menu) {
     });
 }
 
-// --- 2. Configurações Globais e Elementos da Interface ---
+//Configurações Globais e Elementos da Interface
 const API_URL = "https://digi-api.com/api/v1/digimon";
 let digimonAtual = 1;
 
@@ -33,7 +33,7 @@ const btnSearch = document.getElementById("bnt-search");
 const btnRandom = document.getElementById("btn-random");
 const conteudoMain = document.querySelector(".conteudo");
 
-// --- 3. Função para Renderizar o Digimon Encontrado ---
+// Função para Renderizar o Digimon Encontrado
 function renderizarDigimon(digimon) {
     digimonAtual = digimon.id;
 
@@ -68,7 +68,7 @@ function renderizarDigimon(digimon) {
     }
 }
 
-// --- 4. Mensagem para Buscas sem Resultados ---
+// Mensagem para Buscas sem Resultados
 function exibirMensagemSemResultado(termo) {
     if (nome) {
         nome.textContent = "Não encontrado";
@@ -90,7 +90,7 @@ function exibirMensagemSemResultado(termo) {
     }
 }
 
-// --- 5. Implementação da Busca (API DAPI com Fallback Local) ---
+//Implementação da Busca (API DAPI com Fallback Local)
 async function buscarDigimon(termoOuId) {
     const termo = termoOuId.toString().trim().toLowerCase();
 
@@ -117,7 +117,7 @@ async function buscarDigimon(termoOuId) {
     }
 }
 
-// --- 6. Implementação do Botão Me Surpreenda ---
+//Implementação do Botão Me Surpreenda
 function meSurpreenda() {
     // Sorteia entre os itens locais de exemplo ou IDs aleatórios da API
     if (typeof digimonsExemplo !== "undefined" && digimonsExemplo.length > 0) {
@@ -130,7 +130,7 @@ function meSurpreenda() {
     if (searchInput) searchInput.value = "";
 }
 
-// --- 7. Event Listeners e Conexões ---
+// Event Listeners e Conexões
 
 // Busca por Botão ou Enter
 if (btnSearch && searchInput) {
@@ -167,7 +167,7 @@ if (btnProximo) {
     });
 }
 
-// --- 8. Inicialização da Página ---
+//Inicialização da Página
 const urlParams = new URLSearchParams(window.location.search);
 const idUrl = urlParams.get("id");
 
