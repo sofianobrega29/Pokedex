@@ -91,31 +91,58 @@ function exibirMensagemSemResultado(termo) {
 }
 
 //Implementação da Busca (API DAPI com Fallback Local)
-async function buscarDigimon(termoOuId) {
-    const termo = termoOuId.toString().trim().toLowerCase();
 
-    // Primeiro tenta buscar no Array de Dados de Exemplo (Busca Local)
-    const buscaLocal = (typeof digimonsExemplo !== "undefined") ? digimonsExemplo.find(d => 
-        d.name.toLowerCase().includes(termo) || d.id.toString() === termo
-    ) : null;
+async function buscarDigimon(termoOuId) {
+    const termo = termoOuId.toString().trim();
+
+    if (!termo) return;
+
+    const termoMinusculo = termo.toLowerCase();
+    const ehNumero = /^\d+$/.test(termo);
+
+    // 1. Procura nos dados locais por ID ou nome
+    const buscaLocal = typeof digimonsExemplo !== "undefined"
+        ? digimonsExemplo.find(d => {
+            const nomeDigimon = d.name.toLowerCase();
+
+            if (ehNumero) {
+                return d.id.toString() === termo;
+            }
+
+            return nomeDigimon === termoMinusculo ||
+                   nomeDigimon.includes(termoMinusculo);
+        })
+        : null;
 
     if (buscaLocal) {
         renderizarDigimon(buscaLocal);
         return;
     }
 
-    // Se não achar localmente, tenta na API externa
+    // 2. Procura na API pelo ID ou nome informado
     try {
-        const resposta = await fetch(`${API_URL}/${termo}`);
-        if (!resposta.ok) throw new Error("Não encontrado na API");
+        const resposta = await fetch(
+            `${API_URL}/${encodeURIComponent(termo)}`
+        );
+
+        if (!resposta.ok) {
+            throw new Error("Digimon não encontrado");
+        }
 
         const digimonApi = await resposta.json();
+
+        if (!digimonApi.id || !digimonApi.name) {
+            throw new Error("Resposta inválida da API");
+        }
+
         renderizarDigimon(digimonApi);
+
     } catch (erro) {
-        console.warn("Erro ao buscar na API:", erro);
-        exibirMensagemSemResultado(termoOuId);
+        console.warn("Erro ao buscar Digimon:", erro);
+        exibirMensagemSemResultado(termo);
     }
 }
+
 
 //Implementação do Botão Me Surpreenda
 function meSurpreenda() {
