@@ -9,6 +9,8 @@ body {
                 url('../imagens/fundo.png') no-repeat center center fixed;
     background-size: cover;
     color: #2c3e50;
+    padding-bottom: 120px;
+    box-sizing: border-box;
 }
 
 .fundo {
@@ -141,4 +143,189 @@ body {
     right: -30px;
 }
 
+/* BARRA INFERIOR */
 
+.barra-rodape {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    min-height: 90px;
+    background-color: #0b2238;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 8%;
+    box-sizing: border-box;
+    z-index: 1000;
+
+    box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.25);
+}
+
+/* PERFIL */
+
+.barra-rodape .perfil-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.barra-rodape .perfil-box img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* OPÇÕES DO MENU */
+
+.barra-rodape .menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.barra-rodape .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 16px;
+    border-radius: 30px;
+
+    background-color: #496780;
+    color: white;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    transition: 0.3s;
+}
+
+/* ÍCONES CIRCULARES */
+
+.barra-rodape .menu-item img {
+    width: 38px;
+    height: 38px;
+
+    padding: 7px;
+    box-sizing: border-box;
+
+    border-radius: 50%;
+    background-color: #f1f1f1;
+
+    object-fit: contain;
+}
+
+/* EFEITO AO PASSAR O MOUSE */
+
+.barra-rodape .menu-item:hover {
+    background-color: #193f60;
+    transform: translateY(-3px);
+}
+
+/* TELAS MENORES */
+
+@media (max-width: 700px) {
+    .barra-rodape {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .barra-rodape .menu {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .barra-rodape .menu-item {
+        padding: 6px;
+    }
+
+    .barra-rodape .menu-item span {
+        display: none;
+    }
+}
+
+
+/* TEMA ESCURO - PÁGINA DOS DIGIMONS */
+
+body.tema-escuro {
+    color: #f1f1f1;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+        url('../imagens/fundo.png');
+}
+
+body.tema-escuro .fundo {
+    background-color: #102d49;
+    color: #f1f1f1;
+}
+
+body.tema-escuro .campo,
+body.tema-escuro .descricao,
+body.tema-escuro .habilidade {
+    background-color: #193f60;
+    border-color: #7196b5;
+    color: #ffffff;
+}
+
+body.tema-escuro .fundo h1,
+body.tema-escuro h2,
+body.tema-escuro p {
+    color: #ffffff;
+}
+
+body.tema-escuro .imagem-digimon {
+    border-color: #7196b5;
+}
+
+body.tema-escuro .botao {
+    background-color: #496780;
+    color: white;
+}
+
+body.tema-escuro .botao:hover {
+    background-color: #ff6b00;
+}
+
+
+/* PAINEL DE CONFIGURAÇÕES */
+.painel-configuracoes {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.conteudo-configuracoes {
+    position: relative;
+    width: 400px;
+    max-width: 85%;
+    padding: 30px;
+    background-color: white;
+    border-radius: 15px;
+    text-align: center;
+    color: #0b2238;
+}
+
+.fechar-configuracoes {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    border: none;
+    background: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}

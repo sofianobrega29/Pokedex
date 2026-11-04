@@ -203,3 +203,51 @@ if (idUrl) {
 }
 
 buscarDigimon(digimonAtual);
+
+// Botão Início
+const btnInicio = document.getElementById("btn-inicio");
+
+if (btnInicio) {
+    btnInicio.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+}
+
+
+// Botão Noturno
+const btnNoturno = document.getElementById("btn-noturno");
+
+// Verifica se o tema escuro já estava ativado
+if (localStorage.getItem("tema") === "escuro") {
+    document.body.classList.add("tema-escuro");
+}
+
+if (btnNoturno) {
+    btnNoturno.addEventListener("click", () => {
+
+        document.body.classList.toggle("tema-escuro");
+
+        // Salva a preferência do usuário
+        const temaAtivo = document.body.classList.contains("tema-escuro");
+
+        localStorage.setItem("tema", temaAtivo ? "escuro" : "claro");
+    });
+}
+
+
+// Botão Configurações
+const btnConfiguracoes = document.getElementById("btn-configuracoes");
+const painelConfiguracoes = document.getElementById("painel-configuracoes");
+const fecharConfiguracoes = document.getElementById("fechar-configuracoes");
+
+if (btnConfiguracoes && painelConfiguracoes) {
+    btnConfiguracoes.addEventListener("click", () => {
+        painelConfiguracoes.style.display = "flex";
+    });
+}
+
+if (fecharConfiguracoes && painelConfiguracoes) {
+    fecharConfiguracoes.addEventListener("click", () => {
+        painelConfiguracoes.style.display = "none";
+    });
+}
