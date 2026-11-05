@@ -1,3 +1,5 @@
+/* CONFIGURAÇÕES GERAIS */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,8 +8,10 @@
 }
 
 body {
-    background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
-                url('../imagens/fundo.png') no-repeat center center fixed;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+        url('../imagens/fundo.png') no-repeat center center fixed;
+
     background-size: cover;
     color: #2c3e50;
     min-height: 100vh;
@@ -15,43 +19,23 @@ body {
     flex-direction: column;
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 30px;
-    background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(8px);
-    border-bottom: 2px solid #e2e8f0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.hidden {
-    display: none;
-}
-
-.filters-section h2,
-.featured-section h2,
-.cards-section h2 {
-    font-size: 1.3rem;
-    color: #ffffff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-    margin-bottom: 12px;
-}
+/* CABEÇALHO */
 
 .digimon {
     width: 100%;
-    height: 70px;
+    min-height: 70px;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     padding: 12px 30px;
-    background-color: #ffffff;
+
+    background-color: white;
     border-bottom: 2px solid #e2e8f0;
+
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
     position: sticky;
     top: 0;
     z-index: 100;
@@ -63,12 +47,14 @@ body {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
+
     background: linear-gradient(135deg, #ff6b00, #ff8800);
-    color: #ffffff;
+    color: white;
+
     padding: 8px 18px;
     border-radius: 8px;
+
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
 }
 
 .projeto {
@@ -83,11 +69,15 @@ body {
     gap: 12px;
 }
 
+/* PESQUISA */
+
 .box {
     display: flex;
     align-items: center;
+
     background: #edf2f7;
     border-radius: 20px;
+
     padding: 4px 6px 4px 12px;
 }
 
@@ -103,47 +93,51 @@ body {
 .box button {
     width: 34px;
     height: 34px;
+
     border: none;
     background: transparent;
     color: #4a5568;
+
     border-radius: 50%;
     cursor: pointer;
+
     transition: 0.2s ease;
 }
 
 .box button:hover {
     background-color: #ff6b00;
-    color: #ffffff;
+    color: white;
 }
 
-#btn-random {
+/* BOTÃO SURPRESA */
+
+#bnt-random {
     width: 38px;
     height: 38px;
+
     border: none;
     background: #edf2f7;
     color: #4a5568;
+
     border-radius: 50%;
     font-size: 1rem;
+
     cursor: pointer;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     transition: 0.2s ease;
 }
 
-#btn-random:hover {
+#bnt-random:hover {
     background-color: #ff6b00;
-    color: #ffffff;
+    color: white;
     transform: scale(1.05);
 }
 
-.layout {
-    width: 100%;
-    min-height: calc(100vh - 70px);
-    display: flex;
-    align-items: flex-start;
-}
-
+/* MENU LATERAL */
 .barra {
     flex-shrink: 0;
     width: 240px;
@@ -157,10 +151,6 @@ body {
     transition: width 0.3s ease;
 }
 
-.barra.recolhida {
-    width: 80px;
-}
-
 #btn-menu {
     width: 40px;
     height: 40px;
@@ -169,6 +159,10 @@ body {
     color: white;
     font-size: 24px;
     cursor: pointer;
+}
+
+.barra.recolhida {
+    width: 80px;
 }
 
 .perfil-box {
@@ -180,11 +174,8 @@ body {
     padding: 7px 12px;
     background-color: #49657e;
     border-radius: 6px;
-    box-shadow:
-        inset 0 1px 2px rgba(255, 255, 255, 0.15),
-        0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     cursor: pointer;
-    transition: 0.2s;
 }
 
 .perfil-box img {
@@ -198,11 +189,6 @@ body {
     color: white;
     font-size: 14px;
     font-weight: 600;
-}
-
-.perfil-box:hover {
-    background-color: #587994;
-    transform: translateX(2px);
 }
 
 .menu {
@@ -222,7 +208,9 @@ body {
     padding: 8px 12px;
     background-color: #49657e;
     color: white;
+    border: none;
     border-radius: 8px;
+    text-decoration: none;
     cursor: pointer;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
     transition: 0.2s ease;
@@ -232,7 +220,7 @@ body {
     width: 32px;
     height: 32px;
     object-fit: contain;
-    border-radius: 50%;
+    border-radius:50%;
 }
 
 .menu-item span {
@@ -257,54 +245,139 @@ body {
     padding: 8px;
 }
 
+/* CONTEÚDO PRINCIPAL */
 .conteudo {
     flex: 1;
     padding: 30px;
+    margin-top: -100vh;
+    margin-left: 240px;
+    min-height: calc(100vh - 70px);
 }
 
+.barra.recolhida ~ .conteudo {
+    margin-left: 80px;
+}
+
+.cards-section {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+/* TÍTULO DOS CARDS */
+.titulo-cards {
+    margin: 4px 0 24px;
+    color: white;
+    text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.75);
+}
+
+.titulo-cards h2 {
+    font-size: 1.7rem;
+    margin-bottom: 5px;
+}
+
+.titulo-cards p {
+    font-size: 0.98rem;
+}
+
+/* GRADE DOS DIGIMONS */
+.grade-digimons {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* CARD INDIVIDUAL */
 .caixa {
-    width: 200px;
-    height: 250px;
-    top: 10%;
-    left: 15%;
-    position: absolute;
-    background-color: white;
-    border-radius: 15px;
+    min-width: 0;
+    min-height: 245px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    position: relative;
+    background: white;
+    border: 3px solid #96bde2;
+    border-radius: 16px;
+    color: #2c3e50;
     text-align: center;
-    padding: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
-    border:3px solid #96bde2;
+    text-decoration: none;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
 
-.caixa a {
-    text-decoration: none;
-    color: #2c3e50;
-    display: block;
+.caixa:hover {
+    transform: translateY(-6px);
+    border-color: #ff8a25;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+}
+
+/* IMAGEM DO DIGIMON */
+.imagem-card {
+    width: 100%;
+    height: 165px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #f3f7fb;
 }
 
 .caixa img {
     width: 100%;
-    height: 180px;
+    height: 100%;
     object-fit: contain;
-    border-radius: 15px;
-    border:1px solid #b5d5f5;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
 }
 
 .caixa h3 {
-    margin-top: 10px;
+    font-size: 1.08rem;
 }
 
-/* Mensagem de Erro / Sem Resultados (Pessoa 4) */
+.numero-card {
+    margin-top: 4px;
+    color: #718096;
+    font-size: 0.82rem;
+}
+
+/* CARREGAMENTO */
+.carregando {
+    grid-column: 1 / -1;
+    padding: 35px;
+    color: white;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* BOTÃO TENTAR NOVAMENTE */
+.botao-tentar {
+    margin-top: 12px;
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 8px;
+    background: #ff6b00;
+    color: white;
+    cursor: pointer;
+}
+
+/* MENSAGEM DE ERRO */
+
 .mensagem-erro {
-    background: #ffffff;
+    grid-column: 1 / -1;
+    background: white;
     border: 2px dashed #ff6b00;
     border-radius: 12px;
     padding: 20px;
     max-width: 400px;
     margin: 40px auto;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .mensagem-erro h3 {
@@ -317,30 +390,7 @@ body {
     font-size: 0.95rem;
 }
 
-@media (max-width: 768px) {
-    .digimon {
-        flex-direction: column;
-        height: auto;
-        padding: 15px;
-        gap: 12px;
-    }
-
-    .cabeca {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .caixa {
-        position: relative;
-        left: auto;
-        top: auto;
-        margin: 20px auto;
-    }
-}
-
-
-/* TEMA ESCURO - PÁGINA INICIAL */
-
+/* TEMA ESCURO */
 body.tema-escuro {
     background:
         linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
@@ -349,19 +399,15 @@ body.tema-escuro {
     color: #f1f1f1;
 }
 
-/* Cabeçalho */
-body.tema-escuro .navbar,
 body.tema-escuro .digimon {
     background-color: #102d49;
     border-color: #294b68;
 }
 
-/* Títulos */
 body.tema-escuro .projeto {
     color: white;
 }
 
-/* Campo de pesquisa */
 body.tema-escuro .box {
     background-color: #294b68;
 }
@@ -375,25 +421,24 @@ body.tema-escuro .box input::placeholder {
 }
 
 body.tema-escuro .box button,
-body.tema-escuro #btn-random {
+body.tema-escuro #bnt-random {
     color: white;
 }
 
-/* Cartões dos Digimons */
 body.tema-escuro .caixa {
     background-color: #102d49;
     border-color: #7196b5;
-}
-
-body.tema-escuro .caixa a {
     color: white;
 }
 
-body.tema-escuro .caixa img {
-    border-color: #7196b5;
+body.tema-escuro .imagem-card {
+    background-color: #294b68;
 }
 
-/* Mensagem de erro */
+body.tema-escuro .numero-card {
+    color: #cbd5e0;
+}
+
 body.tema-escuro .mensagem-erro {
     background-color: #102d49;
     color: white;
@@ -403,11 +448,9 @@ body.tema-escuro .mensagem-erro p {
     color: #e2e8f0;
 }
 
-/* Barra lateral */
 body.tema-escuro .barra {
     background-color: #061727;
 }
-
 
 /* PAINEL DE CONFIGURAÇÕES */
 .painel-configuracoes {
@@ -440,4 +483,184 @@ body.tema-escuro .barra {
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 1100px) {
+
+    .grade-digimons {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .digimon {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 12px;
+    }
+
+    .projeto {
+        font-size: 1.3rem;
+    }
+
+    .cabeca {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .box input {
+        width: 180px;
+    }
+
+    .barra {
+        width: 100%;
+        min-height: auto;
+
+        display: flex;
+        flex-wrap: wrap;
+
+        border-radius: 0;
+        padding: 10px;
+    }
+
+    .barra.recolhida {
+        width: 100%;
+    }
+
+    .barra .perfil,
+    .barra .menu {
+        margin-top: 8px;
+    }
+
+    .barra.recolhida .perfil-box span,
+    .barra.recolhida .menu-item span {
+        display: inline;
+    }
+
+    .barra.recolhida .perfil-box,
+    .barra.recolhida .menu-item {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .conteudo {
+        margin: 0;
+        padding: 20px 14px;
+    }
+
+    .barra.recolhida ~ .conteudo {
+        margin: 0;
+    }
+
+    .grade-digimons {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .caixa {
+        min-height: 210px;
+        padding: 10px;
+    }
+
+    .imagem-card {
+        height: 140px;
+    }
+
+}
+
+@media (max-width: 400px) {
+
+    .grade-digimons {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ORGANIZAÇÃO DA TELA INICIAL */
+body {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    align-items: stretch;
+}
+
+.digimon {
+    grid-column: 1 / -1;
+}
+
+.barra {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.conteudo {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+    min-width: 0;
+}
+
+body:has(.barra.recolhida) {
+    grid-template-columns: 80px minmax(0, 1fr);
+}
+
+@media (max-width: 768px) {
+    body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+    }
+
+    .digimon,
+    .barra,
+    .conteudo {
+        grid-column: 1;
+    }
+
+    .barra {
+        grid-row: 2;
+    }
+
+    .conteudo {
+        grid-row: 3;
+        margin: 0;
+    }
+
+    body:has(.barra.recolhida) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.botao-aleatorio-container {
+    display: flex;
+    justify-content: center;
+    margin: 45px 0 30px;
+}
+
+#btn-digimon-aleatorio {
+    padding: 15px 28px;
+
+    background: #ff6b00;
+    color: white;
+
+    border: none;
+    border-radius: 12px;
+
+    font-size: 1rem;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#btn-digimon-aleatorio:hover {
+    background: #e65c00;
+    transform: translateY(-4px);
+}
+
+#btn-digimon-aleatorio i {
+    margin-right: 8px;
 }

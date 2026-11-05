@@ -1,95 +1,160 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEXMON</title>
+    <title>DEXMON - Digi Analyzer</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
+
     <header class="digimon">
         <div class="logo">Dexmon</div>
         <h1 class="projeto">Digi Analyzer</h1>
         <div class="cabeca">
-            <!--Busca rápida por nome ou ID-->
+
             <div class="box">
-                <input type="text" id="search-input" placeholder="Buscar por Nome ou ID">
-                <button id="bnt-search" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Buscar por Nome ou ID">
+
+                <button id="bnt-search" aria-label="Buscar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
             </div>
-            <!--Botão me Surpreenda-->
-            <button id="bnt-random" title="Me Surpreenda!"><i class="fa-solid fa-dice"></i></button>
+            <button id="bnt-random" title="Me Surpreenda!">
+                <i class="fa-solid fa-dice"></i>
+            </button>
         </div>
     </header>
 
- <nav class="barra">
+    <nav class="barra">
+        <button id="btn-menu">☰</button>
 
-    <button id="btn-menu">☰</button>
-
-    <div class="perfil">
-        <div class="perfil-box">
-            <img src="imagens/1000323966.jpg" alt="Perfil">
-            <span>Ana Élida</span>
+        <div class="perfil">
+            <div class="perfil-box">
+                <img src="imagens/1000323966.jpg" alt="Perfil">
+                <span>Ana Élida</span>
+            </div>
         </div>
-    </div>
 
-    <div class="menu">
-        <div class="menu-item">
-            <img src="imagens/casa.png" alt="Início">
-            <span>Início</span>
-        </div>
-    </div>
+        <div class="menu">
+            <a href="index.html" class="menu-item" id="btn-inicio">
 
-     <div class="menu">
-        <div class="menu-item">
-            <img src="imagens/favorito.png" alt="Início">
-            <span>Favoritos</span>
-        </div>
-    </div>
+                <img src="imagens/casa.png" alt="Início">
 
-     <div class="menu">
-        <button class="menu-item" id="btn-noturno">
-            <img src="imagens/lua.png" alt="Noturno">
-            <span>Noturno</span>
-        </button>
-    </div>
-
-     <div class="menu">
-        <button class="menu-item" id="btn-configuracoes">
-            <img src="imagens/configuracao.png" alt="Configurações">
-            <span>Configurações</span>
-        </button>
-    </div>
-</nav>
-
-<main class="conteudo">
-
-        <div class="caixa">
-            <a href="card.html?id=1">
-                <img src="imagens/Agumon.png" alt="Agumon">
-                <h3>Agumon</h3>
+                <span>Início</span>
             </a>
         </div>
-</main>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <div class="menu">
+            <div class="menu-item">
+                <img src="imagens/favorito.png" alt="Favoritos">
 
+                <span>Favoritos</span>
+            </div>
+        </div>
 
+        <div class="menu">
+            <button class="menu-item" id="btn-noturno">
+                <img src="imagens/lua.png" alt="Noturno">
 
-<!-- Painel de Configurações -->
-<div id="painel-configuracoes" class="painel-configuracoes">
-    <div class="conteudo-configuracoes">
-        <button id="fechar-configuracoes" class="fechar-configuracoes">X</button>
+                <span>Noturno</span>
+            </button>
+        </div>
 
-        <h2>Sobre o Dexmon</h2>
+        <div class="menu">
+            <button class="menu-item" id="btn-configuracoes">
+                <img src="imagens/configuracao.png" alt="Configurações">
+                <span>Configurações</span>
 
-        <p>
-            Conheça o projeto Dexmon, seus objetivos e informações.
-        </p>
+            </button>
+        </div>
+
+    </nav>
+
+    <main class="conteudo">
+
+        <section class="cards-section">
+            <div class="titulo-cards">
+                <h2>Recomendações de Digmons:</h2>
+
+                <p>
+                    Se divirta explorando novos Digmons!
+                </p>
+
+            </div>
+
+            <div
+                id="lista-digimons"
+                class="grade-digimons"
+                aria-live="polite">
+
+                <p class="carregando">
+                    Carregando Digimons...
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Painel de Configurações -->
+    <div id="painel-configuracoes" class="painel-configuracoes">
+        <div class="conteudo-configuracoes">
+
+            <button
+                id="fechar-configuracoes"
+                class="fechar-configuracoes">
+                X
+            </button>
+
+            <h2>Sobre o Dexmon</h2>
+            <p>
+Sobre o projeto - Digimon Explorer 
+<br>
+É um site interativo desenvolvido para pesquisar e conhecer o universo dos Digimons. Explore informações, características, evoluções e curiosidades de diversas criaturas digitais em um ambiente simples, intuitivo e funcional.
+<br>
+//Equipe//
+<br>
+- Shara Jayane
+<br>
+- Maria Clara
+<br>
+- Sofia Sabina
+<br>
+- Nataniel Lucena
+<br>
+Informações acadêmicas
+<br>
+Instituição:IFRN – Campus Caicó
+<br>
+Curso:Técnico em Informática para Internet
+<br>
+Turma: 2º ano
+<br>
+Professor: Dr. Thales Aguiar
+<br>
+Objetivo
+Aplicar os conhecimentos de desenvolvimento web na criação de uma plataforma de pesquisa organizada, acessível e interativa.
+<br>
+Explore o Mundo Digital e descubra novos Digimons!
+            </p>
+        </div>
     </div>
+    
+<div class="botao-aleatorio-container">
+    <button id="btn-digimon-aleatorio">
+        <i class="fa-solid fa-dice"></i>
+        Encontrar Digimon Aleatório
+    </button>
 </div>
+
     <script src="javascript/script.js"></script>
     <script src="javascript/dados.js"></script>
+
 </body>
 </html>
-   

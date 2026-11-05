@@ -1,20 +1,15 @@
 // javascript/script.js
 
-// 1. Controle do Menu Lateral
-const menu = document.querySelector(".barra");
-const btnMenu = document.getElementById("btn-menu");
-
-if (btnMenu && menu) {
-    btnMenu.addEventListener("click", () => {
-        menu.classList.toggle("recolhida");
-    });
-}
-
-//Configurações Globais e Elementos da Interface
 const API_URL = "https://digi-api.com/api/v1/digimon";
+
 let digimonAtual = 1;
 
-// Elementos da Detalhada (card.html)
+const menu = document.querySelector(".barra");
+const btnMenu = document.getElementById("btn-menu");
+const searchInput = document.getElementById("search-input");
+const btnSearch = document.getElementById("bnt-search");
+const btnRandom = document.getElementById("bnt-random");
+const listaDigimons = document.getElementById("lista-digimons");
 const nome = document.getElementById("nome");
 const imagem = document.getElementById("imagem");
 const tipo = document.getElementById("tipo");
@@ -23,178 +18,216 @@ const atributo = document.getElementById("atributo");
 const descricao = document.getElementById("descricao");
 const habilidades = document.getElementById("habilidades");
 
-// Botões de Navegação (Pessoa 3)
 const btnAnterior = document.getElementById("btnAnterior");
 const btnProximo = document.getElementById("btnProximo");
 
-// Elementos de Busca e Surpresa (Pessoa 4)
-const searchInput = document.getElementById("search-input");
-const btnSearch = document.getElementById("bnt-search");
-const btnRandom = document.getElementById("btn-random");
-const conteudoMain = document.querySelector(".conteudo");
+// Menu lateral
+if (btnMenu && menu) {
+    btnMenu.addEventListener("click", () => {
+        menu.classList.toggle("recolhida");
+    });
+}
 
-// Função para Renderizar o Digimon Encontrado
+// Mostrar detalhes do Digimon
 function renderizarDigimon(digimon) {
     digimonAtual = digimon.id;
 
-    // Se estiver na página de detalhes (card.html)
-    if (nome) nome.textContent = `${digimon.name} #Nº${digimon.id}`;
+    if (nome) nome.textContent = `${digimon.name} Nº ${digimon.id}`;
+
     if (imagem) {
         imagem.src = digimon.images?.[0]?.href || "";
         imagem.alt = digimon.name;
     }
+
     if (tipo) tipo.textContent = digimon.types?.[0]?.type || "-";
     if (nivel) nivel.textContent = digimon.levels?.[0]?.level || "-";
     if (atributo) atributo.textContent = digimon.attributes?.[0]?.attribute || "-";
+
     if (descricao) {
-        descricao.textContent = digimon.descriptions?.[0]?.description || "Descrição não disponível.";
+        descricao.textContent =
+            digimon.descriptions?.[0]?.description ||
+            "Descrição não disponível.";
     }
+
     if (habilidades) {
         habilidades.textContent = Array.isArray(digimon.skills)
             ? digimon.skills.map(s => s.skill).join("; ")
-            : (digimon.skills || "Nenhuma habilidade cadastrada.");
+            : "Nenhuma habilidade cadastrada.";
     }
 
-    // Se estiver na Home (index.html), atualiza o Cartão principal
-    if (conteudoMain && !nome) {
-        conteudoMain.innerHTML = `
-            <div class="caixa">
-                <a href="card.html?id=${digimon.id}">
-                    <img src="${digimon.images?.[0]?.href || ''}" alt="${digimon.name}">
-                    <h3>${digimon.name}</h3>
-                </a>
-            </div>
-        `;
+    if (listaDigimons && !nome) {
+        listaDigimons.innerHTML = criarCardDigimon(digimon);
     }
 }
 
-// Mensagem para Buscas sem Resultados
-function exibirMensagemSemResultado(termo) {
-    if (nome) {
-        nome.textContent = "Não encontrado";
-        if (imagem) imagem.src = "";
-        if (tipo) tipo.textContent = "-";
-        if (nivel) nivel.textContent = "-";
-        if (atributo) atributo.textContent = "-";
-        if (descricao) descricao.textContent = `Nenhum Digimon encontrado para "${termo}".`;
-        if (habilidades) habilidades.textContent = "-";
+// Criar card
+function criarCardDigimon(digimon) {
+    const foto = digimon.images?.[0]?.href || "";
+
+    return `
+        <a class="caixa" href="card.html?id=${digimon.id}">
+            <div class="imagem-card">
+                <img src="${foto}" alt="${digimon.name}" loading="lazy">
+            </div>
+            <h3>${digimon.name}</h3>
+            <span class="numero-card">Nº ${digimon.id}</span>
+        </a>
+    `;
+}
+
+// Embaralhar Digimons
+function embaralharDigimons(lista) {
+    const copia = [...lista];
+
+    for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
     }
 
-    if (conteudoMain && !nome) {
-        conteudoMain.innerHTML = `
+    return copia;
+}
+
+// Carregar 8 Digimons aleatórios
+async function carregarDigimonsAleatorios() {
+    if (!listaDigimons) return;
+
+    listaDigimons.innerHTML = `
+        <p class="carregando">Carregando Digimons...</p>
+    `;
+
+    try {
+        const resposta = await fetch(`${API_URL}?page=0&pageSize=100`);
+
+        if (!resposta.ok) {
+            throw new Error("Erro ao carregar Digimons.");
+        }
+
+        const dados = await resposta.json();
+        const disponiveis = dados.content || dados.data || [];
+
+        if (disponiveis.length < 8) {
+            throw new Error("Digimons insuficientes.");
+        }
+
+        const embaralhados = embaralharDigimons(disponiveis);
+        const selecionados = embaralhados.slice(0, 8);
+
+        const detalhes = await Promise.all(
+            selecionados.map(async item => {
+                if (item.images?.[0]?.href) return item;
+
+                const id = item.id ?? item.href?.split("/").pop();
+
+                const resposta = await fetch(`${API_URL}/${id}`);
+
+                if (!resposta.ok) {
+                    throw new Error("Erro ao buscar Digimon.");
+                }
+
+                return await resposta.json();
+            })
+        );
+
+        listaDigimons.innerHTML = detalhes
+            .map(criarCardDigimon)
+            .join("");
+
+    } catch (erro) {
+        console.error(erro);
+
+        listaDigimons.innerHTML = `
             <div class="mensagem-erro">
-                <h3>Nenhum Digimon encontrado</h3>
-                <p>Não encontramos resultados para "<strong>${termo}</strong>". Tente buscar por nomes como <em>Agumon</em>, <em>Gabumon</em> ou por ID.</p>
+                <h3>Não foi possível carregar os Digimons</h3>
+                <p>Verifique sua conexão com a internet.</p>
+                <button class="botao-tentar"
+                    onclick="carregarDigimonsAleatorios()">
+                    Tentar novamente
+                </button>
             </div>
         `;
     }
 }
 
-//Implementação da Busca (API DAPI com Fallback Local)
-
+// Buscar Digimon
 async function buscarDigimon(termoOuId) {
     const termo = termoOuId.toString().trim();
 
     if (!termo) return;
 
-    const termoMinusculo = termo.toLowerCase();
-    const ehNumero = /^\d+$/.test(termo);
-
-    // 1. Procura nos dados locais por ID ou nome
-    const buscaLocal = typeof digimonsExemplo !== "undefined"
-        ? digimonsExemplo.find(d => {
-            const nomeDigimon = d.name.toLowerCase();
-
-            if (ehNumero) {
-                return d.id.toString() === termo;
-            }
-
-            return nomeDigimon === termoMinusculo ||
-                   nomeDigimon.includes(termoMinusculo);
-        })
-        : null;
-
-    if (buscaLocal) {
-        renderizarDigimon(buscaLocal);
-        return;
-    }
-
-    // 2. Procura na API pelo ID ou nome informado
     try {
         const resposta = await fetch(
             `${API_URL}/${encodeURIComponent(termo)}`
         );
 
         if (!resposta.ok) {
-            throw new Error("Digimon não encontrado");
+            throw new Error("Digimon não encontrado.");
         }
 
-        const digimonApi = await resposta.json();
+        const digimon = await resposta.json();
 
-        if (!digimonApi.id || !digimonApi.name) {
-            throw new Error("Resposta inválida da API");
-        }
-
-        renderizarDigimon(digimonApi);
+        renderizarDigimon(digimon);
 
     } catch (erro) {
-        console.warn("Erro ao buscar Digimon:", erro);
-        exibirMensagemSemResultado(termo);
+        console.error(erro);
+
+        if (listaDigimons && !nome) {
+            listaDigimons.innerHTML = `
+                <div class="mensagem-erro">
+                    <h3>Digimon não encontrado</h3>
+                    <p>Tente pesquisar por outro nome ou ID.</p>
+                </div>
+            `;
+        }
+
+        if (nome) {
+            nome.textContent = "Não encontrado";
+            if (descricao) descricao.textContent = "Digimon não encontrado.";
+        }
     }
 }
 
-
-//Implementação do Botão Me Surpreenda
+// Me Surpreenda
 function meSurpreenda() {
-    // Sorteia entre os itens locais de exemplo ou IDs aleatórios da API
-    if (typeof digimonsExemplo !== "undefined" && digimonsExemplo.length > 0) {
-        const indiceAleatorio = Math.floor(Math.random() * digimonsExemplo.length);
-        renderizarDigimon(digimonsExemplo[indiceAleatorio]);
-    } else {
-        const idAleatorio = Math.floor(Math.random() * 100) + 1;
-        buscarDigimon(idAleatorio);
+    buscarDigimon(Math.floor(Math.random() * 100) + 1);
+
+    if (searchInput) {
+        searchInput.value = "";
     }
-    if (searchInput) searchInput.value = "";
 }
 
-// Event Listeners e Conexões
-
-// Busca por Botão ou Enter
+// Eventos da busca
 if (btnSearch && searchInput) {
     btnSearch.addEventListener("click", () => {
-        if (searchInput.value.trim()) buscarDigimon(searchInput.value.trim());
+        buscarDigimon(searchInput.value);
     });
 
-    searchInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter" && searchInput.value.trim()) {
-            buscarDigimon(searchInput.value.trim());
+    searchInput.addEventListener("keypress", e => {
+        if (e.key === "Enter") {
+            buscarDigimon(searchInput.value);
         }
     });
 }
 
-// Botão Surpresa
 if (btnRandom) {
     btnRandom.addEventListener("click", meSurpreenda);
 }
 
-// Navegação Anterior e Próximo (Pessoa 3)
+// Navegação entre Digimons
 if (btnAnterior) {
     btnAnterior.addEventListener("click", () => {
         if (digimonAtual > 1) {
-            digimonAtual--;
-            buscarDigimon(digimonAtual);
+            buscarDigimon(digimonAtual - 1);
         }
     });
 }
 
 if (btnProximo) {
     btnProximo.addEventListener("click", () => {
-        digimonAtual++;
-        buscarDigimon(digimonAtual);
+        buscarDigimon(digimonAtual + 1);
     });
 }
 
-//Inicialização da Página
+// Inicialização
 const urlParams = new URLSearchParams(window.location.search);
 const idUrl = urlParams.get("id");
 
@@ -202,9 +235,13 @@ if (idUrl) {
     digimonAtual = parseInt(idUrl, 10);
 }
 
-buscarDigimon(digimonAtual);
+if (nome) {
+    buscarDigimon(digimonAtual);
+} else if (listaDigimons) {
+    carregarDigimonsAleatorios();
+}
 
-// Botão Início
+// Botão início
 const btnInicio = document.getElementById("btn-inicio");
 
 if (btnInicio) {
@@ -213,29 +250,25 @@ if (btnInicio) {
     });
 }
 
-
-// Botão Noturno
+// Tema noturno
 const btnNoturno = document.getElementById("btn-noturno");
 
-// Verifica se o tema escuro já estava ativado
 if (localStorage.getItem("tema") === "escuro") {
     document.body.classList.add("tema-escuro");
 }
 
 if (btnNoturno) {
     btnNoturno.addEventListener("click", () => {
-
         document.body.classList.toggle("tema-escuro");
 
-        // Salva a preferência do usuário
-        const temaAtivo = document.body.classList.contains("tema-escuro");
+        const temaAtivo =
+            document.body.classList.contains("tema-escuro");
 
         localStorage.setItem("tema", temaAtivo ? "escuro" : "claro");
     });
 }
 
-
-// Botão Configurações
+// Configurações
 const btnConfiguracoes = document.getElementById("btn-configuracoes");
 const painelConfiguracoes = document.getElementById("painel-configuracoes");
 const fecharConfiguracoes = document.getElementById("fechar-configuracoes");
@@ -249,5 +282,47 @@ if (btnConfiguracoes && painelConfiguracoes) {
 if (fecharConfiguracoes && painelConfiguracoes) {
     fecharConfiguracoes.addEventListener("click", () => {
         painelConfiguracoes.style.display = "none";
+    });
+}
+
+if (painelConfiguracoes) {
+    painelConfiguracoes.addEventListener("click", e => {
+        if (e.target === painelConfiguracoes) {
+            painelConfiguracoes.style.display = "none";
+        }
+    });
+}
+
+const btnDigimonAleatorio = document.getElementById("btn-digimon-aleatorio");
+
+if (btnDigimonAleatorio) {
+    btnDigimonAleatorio.addEventListener("click", async () => {
+        btnDigimonAleatorio.disabled = true;
+        btnDigimonAleatorio.innerHTML = "Sorteando...";
+
+        try {
+            const resposta = await fetch(`${API_URL}?page=0&pageSize=100`);
+            const dados = await resposta.json();
+
+            const digimons = dados.content || dados.data || [];
+
+            if (digimons.length === 0) {
+                throw new Error("Nenhum Digimon encontrado.");
+            }
+
+            const aleatorio = digimons[
+                Math.floor(Math.random() * digimons.length)
+            ];
+
+            window.location.href = `card.html?id=${aleatorio.id}`;
+
+        } catch (erro) {
+            console.error(erro);
+            alert("Não foi possível sortear um Digimon.");
+
+            btnDigimonAleatorio.disabled = false;
+            btnDigimonAleatorio.innerHTML =
+                '<i class="fa-solid fa-dice"></i> Encontrar Digimon Aleatório';
+        }
     });
 }
