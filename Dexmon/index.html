@@ -78,30 +78,26 @@
 
     </nav>
 
-    <main class="conteudo">
+        <main class="conteudo">
+    <section class="cards-section">
+        <div class="titulo-cards">
+            <h2>Recomendações de Digmons:</h2>
+            <p>Se divirta explorando novos Digmons!</p>
+        </div>
 
-        <section class="cards-section">
-            <div class="titulo-cards">
-                <h2>Recomendações de Digmons:</h2>
+        <div id="lista-digimons" class="grade-digimons" aria-live="polite">
+            <p class="carregando">Carregando Digimons...</p>
+        </div>
 
-                <p>
-                    Se divirta explorando novos Digmons!
-                </p>
+        <div class="botao-aleatorio-container">
+            <button id="btn-digimon-aleatorio">
+                <i class="fa-solid fa-dice"></i>
+                Encontrar Digimon Aleatório
+            </button>
+        </div>
+    </section>
 
-            </div>
-
-            <div
-                id="lista-digimons"
-                class="grade-digimons"
-                aria-live="polite">
-
-                <p class="carregando">
-                    Carregando Digimons...
-                </p>
-            </div>
-        </section>
-    </main>
-
+        </main>
     <!-- Painel de Configurações -->
     <div id="painel-configuracoes" class="painel-configuracoes">
         <div class="conteudo-configuracoes">
@@ -114,45 +110,37 @@
 
             <h2>Sobre o Dexmon</h2>
             <p>
-Sobre o projeto - Digimon Explorer 
-<br>
-É um site interativo desenvolvido para pesquisar e conhecer o universo dos Digimons. Explore informações, características, evoluções e curiosidades de diversas criaturas digitais em um ambiente simples, intuitivo e funcional.
-<br>
-//Equipe//
-<br>
-- Shara Jayane
-<br>
-- Maria Clara
-<br>
-- Sofia Sabina
-<br>
-- Nataniel Lucena
-<br>
-Informações acadêmicas
-<br>
-Instituição:IFRN – Campus Caicó
-<br>
-Curso:Técnico em Informática para Internet
-<br>
-Turma: 2º ano
-<br>
-Professor: Dr. Thales Aguiar
-<br>
-Objetivo
-Aplicar os conhecimentos de desenvolvimento web na criação de uma plataforma de pesquisa organizada, acessível e interativa.
-<br>
-Explore o Mundo Digital e descubra novos Digimons!
+    Sobre o projeto - Digimon Explorer 
+    <br>
+    É um site interativo desenvolvido para pesquisar e conhecer o universo dos Digimons. Explore informações, características, evoluções e curiosidades de diversas criaturas digitais em um ambiente simples, intuitivo e funcional.
+    <br>
+    //Equipe//
+    <br>
+    - Shara Jayane
+    <br>
+    - Maria Clara
+    <br>
+    - Sofia Sabina
+    <br>
+    - Nataniel Lucena
+    <br>
+    Informações acadêmicas
+    <br>
+    Instituição:IFRN – Campus Caicó
+    <br>
+    Curso:Técnico em Informática para Internet
+    <br>
+    Turma: 2º ano
+    <br>
+    Professor: Dr. Thales Aguiar
+    <br>
+    Objetivo
+    Aplicar os conhecimentos de desenvolvimento web na criação de uma plataforma de pesquisa organizada, acessível e interativa.
+    <br>
+    Explore o Mundo Digital e descubra novos Digimons!
             </p>
         </div>
     </div>
-    
-<div class="botao-aleatorio-container">
-    <button id="btn-digimon-aleatorio">
-        <i class="fa-solid fa-dice"></i>
-        Encontrar Digimon Aleatório
-    </button>
-</div>
-
     <script src="javascript/script.js"></script>
     <script src="javascript/dados.js"></script>
 

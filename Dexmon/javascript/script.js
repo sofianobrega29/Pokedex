@@ -1,8 +1,16 @@
 // javascript/script.js
 
+
+// javascript/script.js
+
+
 const API_URL = "https://digi-api.com/api/v1/digimon";
+const TRADUCAO_URL = "https://api.mymemory.translated.net/get";
 
 let digimonAtual = 1;
+let controleBusca = 0;
+
+const cacheTraducoes = {};
 
 const menu = document.querySelector(".barra");
 const btnMenu = document.getElementById("btn-menu");
@@ -28,10 +36,103 @@ if (btnMenu && menu) {
     });
 }
 
+// Decodificar caracteres especiais
+function decodificarTexto(texto) {
+    const elemento = document.createElement("textarea");
+    elemento.innerHTML = texto;
+    return elemento.value;
+}
+
+// Traduzir qualquer texto da API
+async function traduzirTexto(texto) {
+    if (!texto) return "-";
+
+    if (cacheTraducoes[texto]) {
+        return cacheTraducoes[texto];
+    }
+
+    cacheTraducoes[texto] = (async () => {
+        try {
+            const parametros = new URLSearchParams({
+                q: texto,
+                langpair: "en|pt-BR"
+            });
+
+            const resposta = await fetch(
+                `${TRADUCAO_URL}?${parametros}`
+            );
+
+            if (!resposta.ok) {
+                throw new Error("Erro no serviço de tradução.");
+            }
+
+            const dados = await resposta.json();
+
+            if (dados.responseStatus !== 200) {
+                throw new Error("Tradução indisponível.");
+            }
+
+            return decodificarTexto(
+                dados.responseData.translatedText
+            );
+
+        } catch (erro) {
+            console.error("Erro na tradução:", erro);
+            return texto;
+        }
+    })();
+
+    return cacheTraducoes[texto];
+}
+
+// Obter descrição em português
+async function obterDescricao(digimon) {
+    const descricoes = digimon.descriptions || [];
+
+    if (descricoes.length === 0) {
+        return "Descrição não disponível.";
+    }
+
+    function identificarIdioma(item) {
+        const idioma = item.language;
+
+        if (typeof idioma === "string") {
+            return idioma;
+        }
+
+        return [
+            idioma?.language,
+            idioma?.code,
+            idioma?.name
+        ].filter(Boolean).join(" ");
+    }
+
+    // Procurar descrição em português
+    const portugues = descricoes.find(item =>
+        /pt|portuguese|português/i.test(identificarIdioma(item))
+    );
+
+    if (portugues) {
+        return portugues.description;
+    }
+
+    // Procurar descrição em inglês
+    const ingles = descricoes.find(item =>
+        /en|english|inglês/i.test(identificarIdioma(item))
+    );
+
+    const original =
+        ingles?.description ||
+        descricoes[0]?.description;
+
+    return await traduzirTexto(original);
+}
+
 // Mostrar detalhes do Digimon
-function renderizarDigimon(digimon) {
+async function renderizarDigimon(digimon, busca) {
     digimonAtual = digimon.id;
 
+    // Nomes próprios são preservados
     if (nome) nome.textContent = `${digimon.name} Nº ${digimon.id}`;
 
     if (imagem) {
@@ -39,19 +140,40 @@ function renderizarDigimon(digimon) {
         imagem.alt = digimon.name;
     }
 
-    if (tipo) tipo.textContent = digimon.types?.[0]?.type || "-";
-    if (nivel) nivel.textContent = digimon.levels?.[0]?.level || "-";
-    if (atributo) atributo.textContent = digimon.attributes?.[0]?.attribute || "-";
+    if (tipo) tipo.textContent = "Traduzindo...";
+    if (nivel) nivel.textContent = "Traduzindo...";
+    if (atributo) atributo.textContent = "Traduzindo...";
+    if (descricao) descricao.textContent = "Traduzindo...";
+    if (habilidades) habilidades.textContent = "Traduzindo...";
 
-    if (descricao) {
-        descricao.textContent =
-            digimon.descriptions?.[0]?.description ||
-            "Descrição não disponível.";
-    }
+    // Traduzir todas as informações simultaneamente
+    const [tipoPT, nivelPT, atributoPT, descricaoPT, habilidadesPT] =
+        await Promise.all([
+            traduzirTexto(digimon.types?.[0]?.type || "-"),
 
+            traduzirTexto(digimon.levels?.[0]?.level || "-"),
+
+            traduzirTexto(digimon.attributes?.[0]?.attribute || "-"),
+
+            obterDescricao(digimon),
+
+            Promise.all(
+                (digimon.skills || []).map(s =>
+                    traduzirTexto(s.skill)
+                )
+            )
+        ]);
+
+    // Impedir que uma busca antiga sobrescreva a atual
+    if (busca !== controleBusca) return;
+
+    if (tipo) tipo.textContent = tipoPT;
+    if (nivel) nivel.textContent = nivelPT;
+    if (atributo) atributo.textContent = atributoPT;
+    if (descricao) descricao.textContent = descricaoPT;
     if (habilidades) {
-        habilidades.textContent = Array.isArray(digimon.skills)
-            ? digimon.skills.map(s => s.skill).join("; ")
+        habilidades.textContent = habilidadesPT.length
+            ? habilidadesPT.join("; ")
             : "Nenhuma habilidade cadastrada.";
     }
 
@@ -154,6 +276,8 @@ async function buscarDigimon(termoOuId) {
 
     if (!termo) return;
 
+    const busca = ++controleBusca;
+
     try {
         const resposta = await fetch(
             `${API_URL}/${encodeURIComponent(termo)}`
@@ -165,10 +289,14 @@ async function buscarDigimon(termoOuId) {
 
         const digimon = await resposta.json();
 
-        renderizarDigimon(digimon);
+        if (busca !== controleBusca) return;
+
+        await renderizarDigimon(digimon, busca);
 
     } catch (erro) {
         console.error(erro);
+
+        if (busca !== controleBusca) return;
 
         if (listaDigimons && !nome) {
             listaDigimons.innerHTML = `
@@ -181,7 +309,10 @@ async function buscarDigimon(termoOuId) {
 
         if (nome) {
             nome.textContent = "Não encontrado";
-            if (descricao) descricao.textContent = "Digimon não encontrado.";
+
+            if (descricao) {
+                descricao.textContent = "Digimon não encontrado.";
+            }
         }
     }
 }
@@ -293,7 +424,9 @@ if (painelConfiguracoes) {
     });
 }
 
-const btnDigimonAleatorio = document.getElementById("btn-digimon-aleatorio");
+// Botão Digimon aleatório
+const btnDigimonAleatorio =
+    document.getElementById("btn-digimon-aleatorio");
 
 if (btnDigimonAleatorio) {
     btnDigimonAleatorio.addEventListener("click", async () => {
@@ -302,8 +435,12 @@ if (btnDigimonAleatorio) {
 
         try {
             const resposta = await fetch(`${API_URL}?page=0&pageSize=100`);
-            const dados = await resposta.json();
 
+            if (!resposta.ok) {
+                throw new Error("Erro ao carregar Digimons.");
+            }
+
+            const dados = await resposta.json();
             const digimons = dados.content || dados.data || [];
 
             if (digimons.length === 0) {

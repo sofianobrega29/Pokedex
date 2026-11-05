@@ -367,7 +367,6 @@ body {
 }
 
 /* MENSAGEM DE ERRO */
-
 .mensagem-erro {
     grid-column: 1 / -1;
     background: white;
@@ -486,7 +485,6 @@ body.tema-escuro .barra {
 }
 
 /* RESPONSIVIDADE */
-
 @media (max-width: 1100px) {
 
     .grade-digimons {
@@ -640,20 +638,24 @@ body:has(.barra.recolhida) {
     margin: 45px 0 30px;
 }
 
+.botao-aleatorio-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 45px 0 30px;
+}
+
 #btn-digimon-aleatorio {
     padding: 15px 28px;
-
-    background: #ff6b00;
+    background: #1b3046;
     color: white;
-
     border: none;
     border-radius: 12px;
-
     font-size: 1rem;
     font-weight: bold;
-
     cursor: pointer;
     transition: 0.3s;
+    border: 3px solid #96bde2;
 }
 
 #btn-digimon-aleatorio:hover {
