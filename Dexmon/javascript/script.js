@@ -1,24 +1,23 @@
 // javascript/script.js
 
-
-// javascript/script.js
-
-
 const API_URL = "https://digi-api.com/api/v1/digimon";
-const TRADUCAO_URL = "https://api.mymemory.translated.net/get";
 
 let digimonAtual = 1;
 let controleBusca = 0;
 let listaOrdenadaCache = [];
-
-const cacheTraducoes = {};
+let listaExibidaAtual = [];
+let ordemCrescente = true;
+let exibindoFavoritos = false;
 
 const menu = document.querySelector(".barra");
 const btnMenu = document.getElementById("btn-menu");
 const searchInput = document.getElementById("search-input");
 const btnSearch = document.getElementById("bnt-search");
 const btnRandom = document.getElementById("bnt-random");
+const btnOrdenarAlfabetica = document.getElementById("btn-ordenar-alfabetica");
+const btnFavoritos = document.getElementById("btn-favoritos");
 const listaDigimons = document.getElementById("lista-digimons");
+
 const nome = document.getElementById("nome");
 const imagem = document.getElementById("imagem");
 const tipo = document.getElementById("tipo");
@@ -37,112 +36,61 @@ if (btnMenu && menu) {
     });
 }
 
-// ordenar digimons de A-Z
-function ordernarDigimonsAlfabeticamente(lista) {
-    return [...lista].sort((a, b) => 
-    (a.name || "").localeCompare(b.name || "", "pt-BR", {
-        sensitivity: "base"
-    })
-  );
+// Ordenar Digimons de A-Z ou Z-A
+function ordernarDigimonsAlfabeticamente(lista, crescente = true) {
+    return [...lista].sort((a, b) => {
+        const comparacao = (a.name || "").localeCompare(b.name || "", "pt-BR", {
+            sensitivity: "base"
+        });
+        return crescente ? comparacao : -comparacao;
+    });
 }
 
-// Decodificar caracteres especiais
-function decodificarTexto(texto) {
-    const elemento = document.createElement("textarea");
-    elemento.innerHTML = texto;
-    return elemento.value;
+// Evento do Botão de Ordem Alfabética
+if (btnOrdenarAlfabetica) {
+    btnOrdenarAlfabetica.addEventListener("click", () => {
+        if (!listaDigimons || listaExibidaAtual.length === 0) return;
+
+        ordemCrescente = !ordemCrescente;
+
+        const listaReordenada = ordernarDigimonsAlfabeticamente(
+            listaExibidaAtual,
+            ordemCrescente
+        );
+
+        listaExibidaAtual = listaReordenada;
+        listaDigimons.innerHTML = listaReordenada
+            .map(criarCardDigimon)
+            .join("");
+
+        const icone = ordemCrescente ? "fa-arrow-down-a-z" : "fa-arrow-up-z-a";
+        const texto = ordemCrescente ? "Ordem: A-Z" : "Ordem: Z-A";
+        btnOrdenarAlfabetica.innerHTML = `<i class="fa-solid ${icone}"></i><span>${texto}</span>`;
+    });
 }
 
-// Traduzir qualquer texto da API
-async function traduzirTexto(texto) {
-    if (!texto) return "-";
-
-    if (cacheTraducoes[texto]) {
-        return cacheTraducoes[texto];
-    }
-
-    cacheTraducoes[texto] = (async () => {
-        try {
-            const parametros = new URLSearchParams({
-                q: texto,
-                langpair: "en|pt-BR"
-            });
-
-            const resposta = await fetch(
-                `${TRADUCAO_URL}?${parametros}`
-            );
-
-            if (!resposta.ok) {
-                throw new Error("Erro no serviço de tradução.");
-            }
-
-            const dados = await resposta.json();
-
-            if (dados.responseStatus !== 200) {
-                throw new Error("Tradução indisponível.");
-            }
-
-            return decodificarTexto(
-                dados.responseData.translatedText
-            );
-
-        } catch (erro) {
-            console.error("Erro na tradução:", erro);
-            return texto;
-        }
-    })();
-
-    return cacheTraducoes[texto];
-}
-
-// Obter descrição em português
-async function obterDescricao(digimon) {
+// Obter descrição direta da API
+function obterDescricao(digimon) {
     const descricoes = digimon.descriptions || [];
 
     if (descricoes.length === 0) {
         return "Descrição não disponível.";
     }
 
-    function identificarIdioma(item) {
-        const idioma = item.language;
+    const ingles = descricoes.find(item => {
+        const idioma = typeof item.language === "string"
+            ? item.language
+            : [item.language?.language, item.language?.code, item.language?.name].filter(Boolean).join(" ");
+        return /en|english/i.test(idioma);
+    });
 
-        if (typeof idioma === "string") {
-            return idioma;
-        }
-
-        return [
-            idioma?.language,
-            idioma?.code,
-            idioma?.name
-        ].filter(Boolean).join(" ");
-    }
-
-    // Procurar descrição em português
-    const portugues = descricoes.find(item =>
-        /pt|portuguese|português/i.test(identificarIdioma(item))
-    );
-
-    if (portugues) {
-        return portugues.description;
-    }
-
-    // Procurar descrição em inglês
-    const ingles = descricoes.find(item =>
-        /en|english|inglês/i.test(identificarIdioma(item))
-    );
-
-    const original =
-        ingles?.description ||
-        descricoes[0]?.description;
-
-    return await traduzirTexto(original);
+    return ingles?.description || descricoes[0]?.description || "Descrição não disponível.";
 }
 
 // Mostrar detalhes do Digimon
-async function renderizarDigimon(digimon, busca) {
+function renderizarDigimon(digimon) {
     digimonAtual = digimon.id;
 
-    // Nomes próprios são preservados
     if (nome) nome.textContent = `${digimon.name} Nº ${digimon.id}`;
 
     if (imagem) {
@@ -150,51 +98,27 @@ async function renderizarDigimon(digimon, busca) {
         imagem.alt = digimon.name;
     }
 
-    if (tipo) tipo.textContent = "Traduzindo...";
-    if (nivel) nivel.textContent = "Traduzindo...";
-    if (atributo) atributo.textContent = "Traduzindo...";
-    if (descricao) descricao.textContent = "Traduzindo...";
-    if (habilidades) habilidades.textContent = "Traduzindo...";
+    if (tipo) tipo.textContent = digimon.types?.[0]?.type || "-";
+    if (nivel) nivel.textContent = digimon.levels?.[0]?.level || "-";
+    if (atributo) atributo.textContent = digimon.attributes?.[0]?.attribute || "-";
+    if (descricao) descricao.textContent = obterDescricao(digimon);
 
-    // Traduzir todas as informações simultaneamente
-    const [tipoPT, nivelPT, atributoPT, descricaoPT, habilidadesPT] =
-        await Promise.all([
-            traduzirTexto(digimon.types?.[0]?.type || "-"),
-
-            traduzirTexto(digimon.levels?.[0]?.level || "-"),
-
-            traduzirTexto(digimon.attributes?.[0]?.attribute || "-"),
-
-            obterDescricao(digimon),
-
-            Promise.all(
-                (digimon.skills || []).map(s =>
-                    traduzirTexto(s.skill)
-                )
-            )
-        ]);
-
-    // Impedir que uma busca antiga sobrescreva a atual
-    if (busca !== controleBusca) return;
-
-    if (tipo) tipo.textContent = tipoPT;
-    if (nivel) nivel.textContent = nivelPT;
-    if (atributo) atributo.textContent = atributoPT;
-    if (descricao) descricao.textContent = descricaoPT;
     if (habilidades) {
-        habilidades.textContent = habilidadesPT.length
-            ? habilidadesPT.join("; ")
+        const listaHabilidades = (digimon.skills || []).map(s => s.skill);
+        habilidades.textContent = listaHabilidades.length
+            ? listaHabilidades.join("; ")
             : "Nenhuma habilidade cadastrada.";
     }
 
     if (listaDigimons && !nome) {
+        listaExibidaAtual = [digimon];
         listaDigimons.innerHTML = criarCardDigimon(digimon);
     }
 }
 
 // Criar card
 function criarCardDigimon(digimon) {
-    const foto = digimon.images?.[0]?.href || "";
+    const foto = digimon.images?.[0]?.href || digimon.image || "";
 
     return `
         <a class="caixa" href="card.html?id=${digimon.id}">
@@ -207,78 +131,68 @@ function criarCardDigimon(digimon) {
     `;
 }
 
-// Embaralhar Digimons
-function embaralharDigimons(lista) {
-    const copia = [...lista];
-
-    for (let i = copia.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copia[i], copia[j]] = [copia[j], copia[i]];
-    }
-
-    return copia;
-}
-
-//obter lista de API ordenada de A-Z
+// Obter TODOS os Digimons da API e ordenar de A-Z
 async function obterListaOrdenada() {
     if (listaOrdenadaCache.length > 0) {
         return listaOrdenadaCache;
     }
 
-    const resposta = await fetch ('${API_URL}?page=0&pageSize=100');
+    const resposta = await fetch(`${API_URL}?page=0&pageSize=2000`);
 
     if (!resposta.ok) {
         throw new Error("Erro ao carregar digimons.");
     }
 
     const dados = await resposta.json();
-    const disponiveis = dados.content || dados.data || [];
+    let todosDigimons = dados.content || dados.data || [];
 
-    listaOrdenadaCache = ordernarDigimonsAlfabeticamente(disponiveis);
+    const totalPaginas = dados.pageable?.totalPages || 1;
+    if (totalPaginas > 1) {
+        const promessasPaginas = [];
+        for (let pagina = 1; pagina < totalPaginas; pagina++) {
+            promessasPaginas.push(
+                fetch(`${API_URL}?page=${pagina}&pageSize=${todosDigimons.length}`)
+                    .then(res => res.ok ? res.json() : null)
+            );
+        }
+
+        const resultados = await Promise.all(promessasPaginas);
+        resultados.forEach(pag => {
+            if (pag?.content) {
+                todosDigimons = todosDigimons.concat(pag.content);
+            }
+        });
+    }
+
+    listaOrdenadaCache = ordernarDigimonsAlfabeticamente(todosDigimons, true);
     return listaOrdenadaCache;
 }
 
-// Carregar 8 Digimons aleatórios
+// Carregar TODOS os Digimons na tela inicial em Ordem Alfabética (sem alterar título)
 async function carregarDigimonsAleatorios() {
     if (!listaDigimons) return;
 
     exibindoFavoritos = false;
+    ordemCrescente = true;
 
-    const tituloSecao = document.querySelector(".titulo-cards h2");
-    const subtituloSecao = document.querySelector(".titulo-cards p");
-    if (tituloSecao) tituloSecao.textContent = "Digimons em Ordem Alfabética (A-Z):";
-    if (subtituloSecao) subtituloSecao.textContent = "Se divirta explorando todos os Digimons organizados de A a Z!";
+    if (btnOrdenarAlfabetica) {
+        btnOrdenarAlfabetica.innerHTML = `<i class="fa-solid fa-arrow-down-a-z"></i><span>Ordem: A-Z</span>`;
+    }
 
     listaDigimons.innerHTML = `
-        <p class="carregando">Carregando Digimons em ordem alfabética...</p>
+        <p class="carregando">Carregando todos os Digimons...</p>
     `;
-    
-    try {
-        const disponiveis = await obterListaOrdenada();
 
-        if (disponiveis.length === 0) {
+    try {
+        const todosOrdenados = await obterListaOrdenada();
+
+        if (todosOrdenados.length === 0) {
             throw new Error("Digimons insuficientes.");
         }
 
-        const detalhes = await Promise.all(
-            disponiveis.map(async item => {
-                if (item.images?.[0]?.href || item.image) return item;
+        listaExibidaAtual = todosOrdenados;
 
-                const id = item.id ?? item.href?.split("/").pop();
-
-                const resposta = await fetch(`${API_URL}/${id}`);
-
-                if (!resposta.ok) {
-                    throw new Error("Erro ao buscar Digimon.");
-                }
-
-                return await resposta.json();
-            })
-        );
-
-        const detalhesOrdenados = ordernarDigimonsAlfabeticamente(detalhes);
-
-        listaDigimons.innerHTML = detalhesOrdenados
+        listaDigimons.innerHTML = todosOrdenados
             .map(criarCardDigimon)
             .join("");
 
@@ -289,8 +203,7 @@ async function carregarDigimonsAleatorios() {
             <div class="mensagem-erro">
                 <h3>Não foi possível carregar os Digimons</h3>
                 <p>Verifique sua conexão com a internet.</p>
-                <button class="botao-tentar"
-                    onclick="carregarDigimonsAleatorios()">
+                <button class="botao-tentar" onclick="carregarDigimonsAleatorios()">
                     Tentar novamente
                 </button>
             </div>
@@ -298,7 +211,15 @@ async function carregarDigimonsAleatorios() {
     }
 }
 
-// Exibir lista de Favoritos em ordem alfabética
+// Funções auxiliares de Favoritos (localStorage)
+function obterFavoritos() {
+    try {
+        return JSON.parse(localStorage.getItem("digimonsFavoritos")) || [];
+    } catch {
+        return [];
+    }
+}
+
 function mostrarFavoritos() {
     if (!listaDigimons) {
         window.location.href = "index.html?favoritos=1";
@@ -306,13 +227,14 @@ function mostrarFavoritos() {
     }
 
     exibindoFavoritos = true;
+    ordemCrescente = true;
 
-    const tituloSecao = document.querySelector(".titulo-cards h2");
-    const subtituloSecao = document.querySelector(".titulo-cards p");
-    if (tituloSecao) tituloSecao.textContent = "Meus Digimons Favoritos (A–Z):";
-    if (subtituloSecao) subtituloSecao.textContent = "Seus Digimons salvos organizados em ordem alfabética.";
+    if (btnOrdenarAlfabetica) {
+        btnOrdenarAlfabetica.innerHTML = `<i class="fa-solid fa-arrow-down-a-z"></i><span>Ordem: A-Z</span>`;
+    }
 
-    const favoritos = ordernarDigimonsAlfabeticamente(obterFavoritos());
+    const favoritos = ordernarDigimonsAlfabeticamente(obterFavoritos(), true);
+    listaExibidaAtual = favoritos;
 
     if (favoritos.length === 0) {
         listaDigimons.innerHTML = `
@@ -332,6 +254,10 @@ function mostrarFavoritos() {
         .join("");
 }
 
+if (btnFavoritos) {
+    btnFavoritos.addEventListener("click", mostrarFavoritos);
+}
+
 // Buscar Digimon
 async function buscarDigimon(termoOuId) {
     const termo = termoOuId.toString().trim();
@@ -341,16 +267,17 @@ async function buscarDigimon(termoOuId) {
     const busca = ++controleBusca;
 
     try {
-        // Se estiver na tela inicial e buscar por nome, filtra mantendo ordem alfabética
         if (listaDigimons && !nome && isNaN(Number(termo))) {
             const lista = await obterListaOrdenada();
             const filtrados = ordernarDigimonsAlfabeticamente(
                 lista.filter(d =>
                     d.name.toLowerCase().includes(termo.toLowerCase())
-                )
+                ),
+                ordemCrescente
             );
 
             if (filtrados.length > 0) {
+                listaExibidaAtual = filtrados;
                 listaDigimons.innerHTML = filtrados
                     .map(criarCardDigimon)
                     .join("");
@@ -358,10 +285,7 @@ async function buscarDigimon(termoOuId) {
             }
         }
 
-    try {
-        const resposta = await fetch(
-            `${API_URL}/${encodeURIComponent(termo)}`
-        );
+        const resposta = await fetch(`${API_URL}/${encodeURIComponent(termo)}`);
 
         if (!resposta.ok) {
             throw new Error("Digimon não encontrado.");
@@ -371,7 +295,7 @@ async function buscarDigimon(termoOuId) {
 
         if (busca !== controleBusca) return;
 
-        await renderizarDigimon(digimon, busca);
+        renderizarDigimon(digimon);
 
     } catch (erro) {
         console.error(erro);
@@ -379,6 +303,7 @@ async function buscarDigimon(termoOuId) {
         if (busca !== controleBusca) return;
 
         if (listaDigimons && !nome) {
+            listaExibidaAtual = [];
             listaDigimons.innerHTML = `
                 <div class="mensagem-erro">
                     <h3>Digimon não encontrado</h3>
@@ -389,7 +314,6 @@ async function buscarDigimon(termoOuId) {
 
         if (nome) {
             nome.textContent = "Não encontrado";
-
             if (descricao) {
                 descricao.textContent = "Digimon não encontrado.";
             }
@@ -399,7 +323,7 @@ async function buscarDigimon(termoOuId) {
 
 // Me Surpreenda
 function meSurpreenda() {
-    buscarDigimon(Math.floor(Math.random() * 100) + 1);
+    buscarDigimon(Math.floor(Math.random() * 1400) + 1);
 
     if (searchInput) {
         searchInput.value = "";
@@ -441,6 +365,7 @@ if (btnProximo) {
 // Inicialização
 const urlParams = new URLSearchParams(window.location.search);
 const idUrl = urlParams.get("id");
+const abrirFavoritosUrl = urlParams.get("favoritos");
 
 if (idUrl) {
     digimonAtual = parseInt(idUrl, 10);
@@ -449,7 +374,11 @@ if (idUrl) {
 if (nome) {
     buscarDigimon(digimonAtual);
 } else if (listaDigimons) {
-    carregarDigimonsAleatorios();
+    if (abrirFavoritosUrl === "1") {
+        mostrarFavoritos();
+    } else {
+        carregarDigimonsAleatorios();
+    }
 }
 
 // Botão início
@@ -471,10 +400,7 @@ if (localStorage.getItem("tema") === "escuro") {
 if (btnNoturno) {
     btnNoturno.addEventListener("click", () => {
         document.body.classList.toggle("tema-escuro");
-
-        const temaAtivo =
-            document.body.classList.contains("tema-escuro");
-
+        const temaAtivo = document.body.classList.contains("tema-escuro");
         localStorage.setItem("tema", temaAtivo ? "escuro" : "claro");
     });
 }
@@ -505,8 +431,7 @@ if (painelConfiguracoes) {
 }
 
 // Botão Digimon aleatório
-const btnDigimonAleatorio =
-    document.getElementById("btn-digimon-aleatorio");
+const btnDigimonAleatorio = document.getElementById("btn-digimon-aleatorio");
 
 if (btnDigimonAleatorio) {
     btnDigimonAleatorio.addEventListener("click", async () => {
@@ -514,23 +439,13 @@ if (btnDigimonAleatorio) {
         btnDigimonAleatorio.innerHTML = "Sorteando...";
 
         try {
-            const resposta = await fetch(`${API_URL}?page=0&pageSize=100`);
+            const listaCompleta = await obterListaOrdenada();
 
-            if (!resposta.ok) {
-                throw new Error("Erro ao carregar Digimons.");
-            }
-
-            const dados = await resposta.json();
-            const digimons = dados.content || dados.data || [];
-
-            if (digimons.length === 0) {
+            if (listaCompleta.length === 0) {
                 throw new Error("Nenhum Digimon encontrado.");
             }
 
-            const aleatorio = digimons[
-                Math.floor(Math.random() * digimons.length)
-            ];
-
+            const aleatorio = listaCompleta[Math.floor(Math.random() * listaCompleta.length)];
             window.location.href = `card.html?id=${aleatorio.id}`;
 
         } catch (erro) {

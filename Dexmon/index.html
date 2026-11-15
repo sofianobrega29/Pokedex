@@ -45,7 +45,7 @@
         </div>
 
         <div class="menu">
-            <div class="menu-item">
+            <div class="menu-item" id="btn-favoritos" style="cursor: pointer;">
                 <img src="imagens/favorito.png" alt="Favoritos">
                 <span>Favoritos</span>
             </div>
@@ -68,13 +68,17 @@
 
     <main class="conteudo">
         <section class="cards-section">
-            <div class="titulo-cards">
-                <h2>Recomendações de Digimons:</h2>
-                <p>Se divirta explorando novos Digimons!</p>
+            <div class="cabecalho-cards">
+                <div class="titulo-cards"></div>
+
+                <button id="btn-ordenar-alfabetica" class="btn-ordenar" title="Ordenar em ordem alfabética">
+                    <i class="fa-solid fa-arrow-down-a-z"></i>
+                    <span>Ordem: A-Z</span>
+                </button>
             </div>
 
             <div id="lista-digimons" class="grade-digimons" aria-live="polite">
-                <p class="carregando">Carregando Digimons...</p>
+                <p class="carregando">Carregando todos os Digimons...</p>
             </div>
 
             <div class="botao-aleatorio-container">
@@ -114,7 +118,6 @@
         </div>
     </div>
 
-    <!-- CARREGAMENTO CORRETO DOS SCRIPTS: dados.js PRIMEIRO, script.js DEPOIS -->
     <script src="javascript/dados.js"></script>
     <script src="javascript/script.js"></script>
 
