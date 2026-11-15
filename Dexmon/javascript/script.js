@@ -9,6 +9,7 @@ const TRADUCAO_URL = "https://api.mymemory.translated.net/get";
 
 let digimonAtual = 1;
 let controleBusca = 0;
+let listaOrdenadaCache = [];
 
 const cacheTraducoes = {};
 
@@ -34,6 +35,15 @@ if (btnMenu && menu) {
     btnMenu.addEventListener("click", () => {
         menu.classList.toggle("recolhida");
     });
+}
+
+// ordenar digimons de A-Z
+function ordernarDigimonsAlfabeticamente(lista) {
+    return [...lista].sort((a, b) => 
+    (a.name || "").localeCompare(b.name || "", "pt-BR", {
+        sensitivity: "base"
+    })
+  );
 }
 
 // Decodificar caracteres especiais
@@ -209,34 +219,50 @@ function embaralharDigimons(lista) {
     return copia;
 }
 
+//obter lista de API ordenada de A-Z
+async function obterListaOrdenada() {
+    if (listaOrdenadaCache.length > 0) {
+        return listaOrdenadaCache;
+    }
+
+    const resposta = await fetch ('${API_URL}?page=0&pageSize=100');
+
+    if (!resposta.ok) {
+        throw new Error("Erro ao carregar digimons.");
+    }
+
+    const dados = await resposta.json();
+    const disponiveis = dados.content || dados.data || [];
+
+    listaOrdenadaCache = ordernarDigimonsAlfabeticamente(disponiveis);
+    return listaOrdenadaCache;
+}
+
 // Carregar 8 Digimons aleatórios
 async function carregarDigimonsAleatorios() {
     if (!listaDigimons) return;
 
+    exibindoFavoritos = false;
+
+    const tituloSecao = document.querySelector(".titulo-cards h2");
+    const subtituloSecao = document.querySelector(".titulo-cards p");
+    if (tituloSecao) tituloSecao.textContent = "Digimons em Ordem Alfabética (A-Z):";
+    if (subtituloSecao) subtituloSecao.textContent = "Se divirta explorando todos os Digimons organizados de A a Z!";
+
     listaDigimons.innerHTML = `
-        <p class="carregando">Carregando Digimons...</p>
+        <p class="carregando">Carregando Digimons em ordem alfabética...</p>
     `;
-
+    
     try {
-        const resposta = await fetch(`${API_URL}?page=0&pageSize=100`);
+        const disponiveis = await obterListaOrdenada();
 
-        if (!resposta.ok) {
-            throw new Error("Erro ao carregar Digimons.");
-        }
-
-        const dados = await resposta.json();
-        const disponiveis = dados.content || dados.data || [];
-
-        if (disponiveis.length < 8) {
+        if (disponiveis.length === 0) {
             throw new Error("Digimons insuficientes.");
         }
 
-        const embaralhados = embaralharDigimons(disponiveis);
-        const selecionados = embaralhados.slice(0, 8);
-
         const detalhes = await Promise.all(
-            selecionados.map(async item => {
-                if (item.images?.[0]?.href) return item;
+            disponiveis.map(async item => {
+                if (item.images?.[0]?.href || item.image) return item;
 
                 const id = item.id ?? item.href?.split("/").pop();
 
@@ -250,7 +276,9 @@ async function carregarDigimonsAleatorios() {
             })
         );
 
-        listaDigimons.innerHTML = detalhes
+        const detalhesOrdenados = ordernarDigimonsAlfabeticamente(detalhes);
+
+        listaDigimons.innerHTML = detalhesOrdenados
             .map(criarCardDigimon)
             .join("");
 
@@ -270,6 +298,40 @@ async function carregarDigimonsAleatorios() {
     }
 }
 
+// Exibir lista de Favoritos em ordem alfabética
+function mostrarFavoritos() {
+    if (!listaDigimons) {
+        window.location.href = "index.html?favoritos=1";
+        return;
+    }
+
+    exibindoFavoritos = true;
+
+    const tituloSecao = document.querySelector(".titulo-cards h2");
+    const subtituloSecao = document.querySelector(".titulo-cards p");
+    if (tituloSecao) tituloSecao.textContent = "Meus Digimons Favoritos (A–Z):";
+    if (subtituloSecao) subtituloSecao.textContent = "Seus Digimons salvos organizados em ordem alfabética.";
+
+    const favoritos = ordernarDigimonsAlfabeticamente(obterFavoritos());
+
+    if (favoritos.length === 0) {
+        listaDigimons.innerHTML = `
+            <div class="mensagem-erro">
+                <h3>Nenhum favorito ainda</h3>
+                <p>Abra o cartão de um Digimon e clique em "Favoritar" para salvá-lo aqui.</p>
+                <button class="botao-tentar" onclick="carregarDigimonsAleatorios()">
+                    Ver todos os Digimons (A–Z)
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    listaDigimons.innerHTML = favoritos
+        .map(criarCardDigimon)
+        .join("");
+}
+
 // Buscar Digimon
 async function buscarDigimon(termoOuId) {
     const termo = termoOuId.toString().trim();
@@ -277,6 +339,24 @@ async function buscarDigimon(termoOuId) {
     if (!termo) return;
 
     const busca = ++controleBusca;
+
+    try {
+        // Se estiver na tela inicial e buscar por nome, filtra mantendo ordem alfabética
+        if (listaDigimons && !nome && isNaN(Number(termo))) {
+            const lista = await obterListaOrdenada();
+            const filtrados = ordernarDigimonsAlfabeticamente(
+                lista.filter(d =>
+                    d.name.toLowerCase().includes(termo.toLowerCase())
+                )
+            );
+
+            if (filtrados.length > 0) {
+                listaDigimons.innerHTML = filtrados
+                    .map(criarCardDigimon)
+                    .join("");
+                return;
+            }
+        }
 
     try {
         const resposta = await fetch(
