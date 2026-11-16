@@ -69,6 +69,42 @@ if (btnOrdenarAlfabetica) {
     });
 }
 
+// Funções auxiliares de Favoritos (localStorage)
+function obterFavoritos() {
+    try {
+        return JSON.parse(localStorage.getItem("digimonsFavoritos")) || [];
+    } catch {
+        return [];
+    }
+}
+
+function salvarFavoritos(lista) {
+    localStorage.setItem("digimonsFavoritos", JSON.stringify(lista));
+}
+
+function estaFavoritado(id) {
+    return obterFavoritos().some(item => Number(item.id) === Number(id));
+}
+
+function alternarFavorito(digimon) {
+    const favoritos = obterFavoritos();
+    const indice = favoritos.findIndex(item => Number(item.id) === Number(digimon.id));
+
+    if (indice >= 0) {
+        favoritos.splice(indice, 1);
+    } else {
+        favoritos.push({
+            id: digimon.id,
+            name: digimon.name,
+            image: digimon.images?.[0]?.href || digimon.image || "",
+            images: digimon.images || []
+        });
+    }
+
+    salvarFavoritos(favoritos);
+    return indice < 0;
+}
+
 // Obter descrição direta da API
 function obterDescricao(digimon) {
     const descricoes = digimon.descriptions || [];
@@ -87,11 +123,38 @@ function obterDescricao(digimon) {
     return ingles?.description || descricoes[0]?.description || "Descrição não disponível.";
 }
 
-// Mostrar detalhes do Digimon com resumo + "Ver mais..." natural no texto
+// Mostrar detalhes do Digimon com botão de Favoritar + resumo com "Ver mais..."
 function renderizarDigimon(digimon) {
     digimonAtual = digimon.id;
 
-    if (nome) nome.textContent = `${digimon.name} Nº ${digimon.id}`;
+    if (nome) {
+        nome.innerHTML = "";
+
+        const spanTitulo = document.createElement("span");
+        spanTitulo.textContent = `${digimon.name} Nº ${digimon.id}`;
+
+        const btnFav = document.createElement("button");
+        btnFav.type = "button";
+        btnFav.id = "btn-favoritar-digimon";
+        btnFav.className = "btn-favoritar-digimon";
+
+        const atualizarVisualBotaoFavorito = () => {
+            const ativo = estaFavoritado(digimon.id);
+            btnFav.classList.toggle("favoritado", ativo);
+            btnFav.innerHTML = ativo ? "&#10084; Favoritado" : "&#9825; Favoritar";
+            btnFav.title = ativo ? "Remover dos favoritos" : "Adicionar aos favoritos";
+        };
+
+        atualizarVisualBotaoFavorito();
+
+        btnFav.addEventListener("click", () => {
+            alternarFavorito(digimon);
+            atualizarVisualBotaoFavorito();
+        });
+
+        nome.appendChild(spanTitulo);
+        nome.appendChild(btnFav);
+    }
 
     if (imagem) {
         imagem.src = digimon.images?.[0]?.href || "";
@@ -250,15 +313,6 @@ async function carregarDigimonsAleatorios() {
                 </button>
             </div>
         `;
-    }
-}
-
-// Funções auxiliares de Favoritos (localStorage)
-function obterFavoritos() {
-    try {
-        return JSON.parse(localStorage.getItem("digimonsFavoritos")) || [];
-    } catch {
-        return [];
     }
 }
 
