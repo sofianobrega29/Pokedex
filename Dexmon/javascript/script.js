@@ -29,119 +29,175 @@ const habilidades = document.getElementById("habilidades");
 const btnAnterior = document.getElementById("btnAnterior");
 const btnProximo = document.getElementById("btnProximo");
 
-// Garante que o fundo da área da imagem acompanhe o card tanto no modo claro quanto no escuro
-function injetarEstilosFundoImagem() {
+// Garante contraste nos fundos das imagens, barra lateral no modo claro e botões aleatórios
+function injetarEstilosVisuaisGlobais() {
     if (document.getElementById("estilo-fundo-imagem-tema")) return;
 
     const style = document.createElement("style");
     style.id = "estilo-fundo-imagem-tema";
     style.textContent = `
-        body:not(.tema-escuro) .imagem-card {
+        /* Área da imagem com fundo branco uniforme para preservar as cores originais dos Digimons */
+        .imagem-card,
+        .imagem-card * {
             background-color: #ffffff !important;
         }
         body.tema-escuro .imagem-card {
-            background-color: transparent !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
         }
-        body.tema-escuro .imagem-card img,
-        body.tema-escuro .imagem-digimon img {
-            border-radius: 12px;
+        body.tema-escuro .imagem-digimon {
+            background-color: #ffffff !important;
+        }
+
+        /* BARRA LATERAL NO MODO CLARO */
+        body:not(.tema-escuro) .barra {
+            background-color: #f4f7fb !important;
+            border-right: 2px solid #d5e0ec !important;
+            box-shadow: 4px 0 18px rgba(11, 34, 56, 0.12) !important;
+        }
+        body:not(.tema-escuro) .barra #btn-menu {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            margin-bottom: 12px !important;
+            color: #14385e !important;
+        }
+        body:not(.tema-escuro) .barra #btn-menu:hover {
+            background-color: rgba(20, 56, 94, 0.08) !important;
+            color: #ff6b00 !important;
+        }
+        body:not(.tema-escuro) .barra #btn-menu .fa-bars,
+        body:not(.tema-escuro) .barra .fa-bars {
+            color: inherit !important;
+        }
+        body:not(.tema-escuro) .barra .perfil-box,
+        body:not(.tema-escuro) .barra .menu-item,
+        body:not(.tema-escuro) .barra button:not(#btn-menu),
+        body:not(.tema-escuro) .barra a {
+            background-color: #ffffff !important;
+            color: #14385e !important;
+            border: 1px solid #d5e0ec !important;
+            box-shadow: 0 2px 6px rgba(11, 34, 56, 0.06) !important;
+        }
+        body:not(.tema-escuro) .barra .perfil-box span,
+        body:not(.tema-escuro) .barra .menu-item span,
+        body:not(.tema-escuro) .barra button:not(#btn-menu) span,
+        body:not(.tema-escuro) .barra a span {
+            color: #14385e !important;
+        }
+        body:not(.tema-escuro) .barra .menu-item img,
+        body:not(.tema-escuro) .barra button:not(#btn-menu) img,
+        body:not(.tema-escuro) .barra a img {
+            background-color: #e8eff7 !important;
+        }
+        body:not(.tema-escuro) .barra .menu-item:hover,
+        body:not(.tema-escuro) .barra button:not(#btn-menu):hover,
+        body:not(.tema-escuro) .barra a:hover {
+            background-color: #ff6b00 !important;
+            color: #ffffff !important;
+            border-color: #ff6b00 !important;
+        }
+        body:not(.tema-escuro) .barra .menu-item:hover span,
+        body:not(.tema-escuro) .barra button:not(#btn-menu):hover span,
+        body:not(.tema-escuro) .barra a:hover span {
+            color: #ffffff !important;
+        }
+
+        /* Botão circular dos dados na barra de busca (#bnt-random) */
+        #bnt-random {
+            color: #14385e !important;
+            transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+        }
+        #bnt-random i,
+        #bnt-random svg {
+            color: #14385e !important;
+            fill: #14385e !important;
+        }
+        #bnt-random img {
+            filter: brightness(0) saturate(100%) invert(16%) sepia(43%) saturate(1352%) hue-rotate(183deg) brightness(94%) contrast(93%) !important;
+        }
+        #bnt-random:hover {
+            background-color: #ff6b00 !important;
+            color: #ffffff !important;
+        }
+        #bnt-random:hover i,
+        #bnt-random:hover svg {
+            color: #ffffff !important;
+            fill: #ffffff !important;
+        }
+        #bnt-random:hover img {
+            filter: brightness(0) invert(1) !important;
+        }
+
+        /* BOTÕES "ORDEM ALFABÉTICA" E "ENCONTRAR DIGIMON ALEATÓRIO" NO MODO CLARO */
+        body:not(.tema-escuro) #btn-ordenar-alfabetica,
+        body:not(.tema-escuro) #btn-digimon-aleatorio {
+            background-color: #ffffff !important;
+            color: #14385e !important;
+            border: 2px solid #d5e0ec !important;
+            box-shadow: 0 4px 12px rgba(11, 34, 56, 0.14) !important;
+            transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+        }
+        body:not(.tema-escuro) #btn-ordenar-alfabetica i,
+        body:not(.tema-escuro) #btn-ordenar-alfabetica svg,
+        body:not(.tema-escuro) #btn-ordenar-alfabetica span,
+        body:not(.tema-escuro) #btn-digimon-aleatorio i,
+        body:not(.tema-escuro) #btn-digimon-aleatorio svg,
+        body:not(.tema-escuro) #btn-digimon-aleatorio span {
+            color: #14385e !important;
+            fill: #14385e !important;
+        }
+        body:not(.tema-escuro) #btn-ordenar-alfabetica:hover,
+        body:not(.tema-escuro) #btn-digimon-aleatorio:hover {
+            background-color: #ff6b00 !important;
+            border-color: #ff6b00 !important;
+            color: #ffffff !important;
+        }
+        body:not(.tema-escuro) #btn-ordenar-alfabetica:hover i,
+        body:not(.tema-escuro) #btn-ordenar-alfabetica:hover svg,
+        body:not(.tema-escuro) #btn-ordenar-alfabetica:hover span,
+        body:not(.tema-escuro) #btn-digimon-aleatorio:hover i,
+        body:not(.tema-escuro) #btn-digimon-aleatorio:hover svg,
+        body:not(.tema-escuro) #btn-digimon-aleatorio:hover span {
+            color: #ffffff !important;
+            fill: #ffffff !important;
+        }
+
+        /* BOTÕES "ORDEM ALFABÉTICA" E "ENCONTRAR DIGIMON ALEATÓRIO" NO MODO NOTURNO */
+        body.tema-escuro #btn-ordenar-alfabetica,
+        body.tema-escuro #btn-digimon-aleatorio {
+            color: #ffffff !important;
+            transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+        }
+        body.tema-escuro #btn-ordenar-alfabetica i,
+        body.tema-escuro #btn-ordenar-alfabetica svg,
+        body.tema-escuro #btn-ordenar-alfabetica span,
+        body.tema-escuro #btn-digimon-aleatorio i,
+        body.tema-escuro #btn-digimon-aleatorio svg,
+        body.tema-escuro #btn-digimon-aleatorio span {
+            color: #ffffff !important;
+            fill: #ffffff !important;
+        }
+        body.tema-escuro #btn-ordenar-alfabetica:hover,
+        body.tema-escuro #btn-digimon-aleatorio:hover {
+            background-color: #ff6b00 !important;
+            border-color: #ff6b00 !important;
+            color: #ffffff !important;
+        }
+        body.tema-escuro #btn-ordenar-alfabetica:hover i,
+        body.tema-escuro #btn-ordenar-alfabetica:hover svg,
+        body.tema-escuro #btn-ordenar-alfabetica:hover span,
+        body.tema-escuro #btn-digimon-aleatorio:hover i,
+        body.tema-escuro #btn-digimon-aleatorio:hover svg,
+        body.tema-escuro #btn-digimon-aleatorio:hover span {
+            color: #ffffff !important;
+            fill: #ffffff !important;
         }
     `;
     document.head.appendChild(style);
 }
 
-injetarEstilosFundoImagem();
-
-// Cache de imagens com fundo branco removido para o Modo Noturno
-const cacheImagensTransparentes = new Map();
-
-function removerFundoBrancoImagem(imgElement) {
-    if (!imgElement || !imgElement.src) return;
-
-    const urlOriginal = imgElement.dataset.originalSrc || imgElement.src;
-    if (!urlOriginal || urlOriginal.startsWith("data:")) return;
-
-    imgElement.dataset.originalSrc = urlOriginal;
-
-    if (!document.body.classList.contains("tema-escuro")) {
-        if (imgElement.src !== urlOriginal) {
-            imgElement.src = urlOriginal;
-        }
-        return;
-    }
-
-    if (cacheImagensTransparentes.has(urlOriginal)) {
-        const cached = cacheImagensTransparentes.get(urlOriginal);
-        if (cached && imgElement.src !== cached) {
-            imgElement.src = cached;
-        }
-        return;
-    }
-
-    const tempImg = new Image();
-    tempImg.crossOrigin = "Anonymous";
-
-    tempImg.onload = () => {
-        try {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-            canvas.width = tempImg.naturalWidth || tempImg.width;
-            canvas.height = tempImg.naturalHeight || tempImg.height;
-
-            ctx.drawImage(tempImg, 0, 0);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imageData.data;
-
-            for (let i = 0; i < data.length; i += 4) {
-                const r = data[i];
-                const g = data[i + 1];
-                const b = data[i + 2];
-
-                // Torna pixels brancos / quase brancos transparentes
-                if (r > 240 && g > 240 && b > 240) {
-                    data[i + 3] = 0;
-                } else if (r > 220 && g > 220 && b > 220) {
-                    const media = (r + g + b) / 3;
-                    const fator = (245 - media) / 25;
-                    data[i + 3] = Math.max(0, Math.min(255, Math.round(data[i + 3] * fator)));
-                }
-            }
-
-            ctx.putImageData(imageData, 0, 0);
-            const dataUrl = canvas.toDataURL("image/png");
-            cacheImagensTransparentes.set(urlOriginal, dataUrl);
-
-            if (document.body.classList.contains("tema-escuro")) {
-                imgElement.src = dataUrl;
-            }
-        } catch {
-            cacheImagensTransparentes.set(urlOriginal, null);
-        }
-    };
-
-    tempImg.onerror = () => {
-        cacheImagensTransparentes.set(urlOriginal, null);
-    };
-
-    tempImg.src = urlOriginal;
-}
-
-function atualizarTodasImagensTema() {
-    document.querySelectorAll(".imagem-card img, #imagem").forEach(img => {
-        removerFundoBrancoImagem(img);
-    });
-}
-
-// Observa novas imagens carregadas na lista para aplicar o recorte no modo noturno
-const observadorImagens = new MutationObserver(() => {
-    if (document.body.classList.contains("tema-escuro")) {
-        atualizarTodasImagensTema();
-    }
-});
-
-if (listaDigimons) {
-    observadorImagens.observe(listaDigimons, { childList: true, subtree: true });
-}
+injetarEstilosVisuaisGlobais();
 
 // Menu lateral
 if (btnMenu && menu) {
@@ -271,11 +327,8 @@ function renderizarDigimon(digimon) {
     }
 
     if (imagem) {
-        const urlFoto = digimon.images?.[0]?.href || "";
-        imagem.dataset.originalSrc = urlFoto;
-        imagem.src = urlFoto;
+        imagem.src = digimon.images?.[0]?.href || "";
         imagem.alt = digimon.name;
-        removerFundoBrancoImagem(imagem);
     }
 
     if (tipo) tipo.textContent = digimon.types?.[0]?.type || "-";
@@ -608,7 +661,6 @@ const btnNoturno = document.getElementById("btn-noturno");
 
 if (localStorage.getItem("tema") === "escuro") {
     document.body.classList.add("tema-escuro");
-    atualizarTodasImagensTema();
 }
 
 if (btnNoturno) {
@@ -616,7 +668,6 @@ if (btnNoturno) {
         document.body.classList.toggle("tema-escuro");
         const temaAtivo = document.body.classList.contains("tema-escuro");
         localStorage.setItem("tema", temaAtivo ? "escuro" : "claro");
-        atualizarTodasImagensTema();
     });
 }
 
