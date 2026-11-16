@@ -29,6 +29,120 @@ const habilidades = document.getElementById("habilidades");
 const btnAnterior = document.getElementById("btnAnterior");
 const btnProximo = document.getElementById("btnProximo");
 
+// Garante que o fundo da área da imagem acompanhe o card tanto no modo claro quanto no escuro
+function injetarEstilosFundoImagem() {
+    if (document.getElementById("estilo-fundo-imagem-tema")) return;
+
+    const style = document.createElement("style");
+    style.id = "estilo-fundo-imagem-tema";
+    style.textContent = `
+        body:not(.tema-escuro) .imagem-card {
+            background-color: #ffffff !important;
+        }
+        body.tema-escuro .imagem-card {
+            background-color: transparent !important;
+        }
+        body.tema-escuro .imagem-card img,
+        body.tema-escuro .imagem-digimon img {
+            border-radius: 12px;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+injetarEstilosFundoImagem();
+
+// Cache de imagens com fundo branco removido para o Modo Noturno
+const cacheImagensTransparentes = new Map();
+
+function removerFundoBrancoImagem(imgElement) {
+    if (!imgElement || !imgElement.src) return;
+
+    const urlOriginal = imgElement.dataset.originalSrc || imgElement.src;
+    if (!urlOriginal || urlOriginal.startsWith("data:")) return;
+
+    imgElement.dataset.originalSrc = urlOriginal;
+
+    if (!document.body.classList.contains("tema-escuro")) {
+        if (imgElement.src !== urlOriginal) {
+            imgElement.src = urlOriginal;
+        }
+        return;
+    }
+
+    if (cacheImagensTransparentes.has(urlOriginal)) {
+        const cached = cacheImagensTransparentes.get(urlOriginal);
+        if (cached && imgElement.src !== cached) {
+            imgElement.src = cached;
+        }
+        return;
+    }
+
+    const tempImg = new Image();
+    tempImg.crossOrigin = "Anonymous";
+
+    tempImg.onload = () => {
+        try {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = tempImg.naturalWidth || tempImg.width;
+            canvas.height = tempImg.naturalHeight || tempImg.height;
+
+            ctx.drawImage(tempImg, 0, 0);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+
+                // Torna pixels brancos / quase brancos transparentes
+                if (r > 240 && g > 240 && b > 240) {
+                    data[i + 3] = 0;
+                } else if (r > 220 && g > 220 && b > 220) {
+                    const media = (r + g + b) / 3;
+                    const fator = (245 - media) / 25;
+                    data[i + 3] = Math.max(0, Math.min(255, Math.round(data[i + 3] * fator)));
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            const dataUrl = canvas.toDataURL("image/png");
+            cacheImagensTransparentes.set(urlOriginal, dataUrl);
+
+            if (document.body.classList.contains("tema-escuro")) {
+                imgElement.src = dataUrl;
+            }
+        } catch {
+            cacheImagensTransparentes.set(urlOriginal, null);
+        }
+    };
+
+    tempImg.onerror = () => {
+        cacheImagensTransparentes.set(urlOriginal, null);
+    };
+
+    tempImg.src = urlOriginal;
+}
+
+function atualizarTodasImagensTema() {
+    document.querySelectorAll(".imagem-card img, #imagem").forEach(img => {
+        removerFundoBrancoImagem(img);
+    });
+}
+
+// Observa novas imagens carregadas na lista para aplicar o recorte no modo noturno
+const observadorImagens = new MutationObserver(() => {
+    if (document.body.classList.contains("tema-escuro")) {
+        atualizarTodasImagensTema();
+    }
+});
+
+if (listaDigimons) {
+    observadorImagens.observe(listaDigimons, { childList: true, subtree: true });
+}
+
 // Menu lateral
 if (btnMenu && menu) {
     btnMenu.addEventListener("click", () => {
@@ -157,8 +271,11 @@ function renderizarDigimon(digimon) {
     }
 
     if (imagem) {
-        imagem.src = digimon.images?.[0]?.href || "";
+        const urlFoto = digimon.images?.[0]?.href || "";
+        imagem.dataset.originalSrc = urlFoto;
+        imagem.src = urlFoto;
         imagem.alt = digimon.name;
+        removerFundoBrancoImagem(imagem);
     }
 
     if (tipo) tipo.textContent = digimon.types?.[0]?.type || "-";
@@ -491,6 +608,7 @@ const btnNoturno = document.getElementById("btn-noturno");
 
 if (localStorage.getItem("tema") === "escuro") {
     document.body.classList.add("tema-escuro");
+    atualizarTodasImagensTema();
 }
 
 if (btnNoturno) {
@@ -498,6 +616,7 @@ if (btnNoturno) {
         document.body.classList.toggle("tema-escuro");
         const temaAtivo = document.body.classList.contains("tema-escuro");
         localStorage.setItem("tema", temaAtivo ? "escuro" : "claro");
+        atualizarTodasImagensTema();
     });
 }
 
