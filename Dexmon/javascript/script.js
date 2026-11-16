@@ -87,7 +87,7 @@ function obterDescricao(digimon) {
     return ingles?.description || descricoes[0]?.description || "Descrição não disponível.";
 }
 
-// Mostrar detalhes do Digimon
+// Mostrar detalhes do Digimon com resumo + "Ver mais..." natural no texto
 function renderizarDigimon(digimon) {
     digimonAtual = digimon.id;
 
@@ -101,7 +101,49 @@ function renderizarDigimon(digimon) {
     if (tipo) tipo.textContent = digimon.types?.[0]?.type || "-";
     if (nivel) nivel.textContent = digimon.levels?.[0]?.level || "-";
     if (atributo) atributo.textContent = digimon.attributes?.[0]?.attribute || "-";
-    if (descricao) descricao.textContent = obterDescricao(digimon);
+
+    if (descricao) {
+        const textoCompleto = obterDescricao(digimon);
+        const limiteCaracteres = 180;
+
+        if (textoCompleto.length > limiteCaracteres) {
+            const textoResumido = textoCompleto.slice(0, limiteCaracteres).trim() + "... ";
+            let expandido = false;
+
+            const atualizarTextoDescricao = () => {
+                descricao.innerHTML = "";
+
+                const spanTexto = document.createElement("span");
+                spanTexto.textContent = expandido ? textoCompleto + " " : textoResumido;
+
+                const btnVerMais = document.createElement("span");
+                btnVerMais.className = "btn-ver-mais";
+                btnVerMais.role = "button";
+                btnVerMais.tabIndex = 0;
+                btnVerMais.textContent = expandido ? "Ver menos" : "Ver mais...";
+
+                const alternar = () => {
+                    expandido = !expandido;
+                    atualizarTextoDescricao();
+                };
+
+                btnVerMais.addEventListener("click", alternar);
+                btnVerMais.addEventListener("keypress", e => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        alternar();
+                    }
+                });
+
+                descricao.appendChild(spanTexto);
+                descricao.appendChild(btnVerMais);
+            };
+
+            atualizarTextoDescricao();
+        } else {
+            descricao.textContent = textoCompleto;
+        }
+    }
 
     if (habilidades) {
         const listaHabilidades = (digimon.skills || []).map(s => s.skill);
@@ -168,7 +210,7 @@ async function obterListaOrdenada() {
     return listaOrdenadaCache;
 }
 
-// Carregar TODOS os Digimons na tela inicial em Ordem Alfabética (sem alterar título)
+// Carregar TODOS os Digimons na tela inicial em Ordem Alfabética
 async function carregarDigimonsAleatorios() {
     if (!listaDigimons) return;
 
