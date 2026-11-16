@@ -447,30 +447,76 @@ if (btnNoturno) {
     });
 }
 
-// Configurações
-const btnConfiguracoes = document.getElementById("btn-configuracoes");
-const painelConfiguracoes = document.getElementById("painel-configuracoes");
-const fecharConfiguracoes = document.getElementById("fechar-configuracoes");
+// Configurações (garante o texto completo incluindo "Objetivo" em TODAS as páginas)
+function garantirPainelConfiguracoes() {
+    let painel = document.getElementById("painel-configuracoes");
 
-if (btnConfiguracoes && painelConfiguracoes) {
-    btnConfiguracoes.addEventListener("click", () => {
-        painelConfiguracoes.style.display = "flex";
-    });
+    const conteudoCompletoHTML = `
+        <div class="conteudo-configuracoes" style="position:relative; width:400px; max-width:85%; max-height:85vh; overflow-y:auto; padding:30px; background-color:white; border-radius:15px; text-align:center; color:#0b2238; box-shadow:0 10px 30px rgba(0,0,0,0.4);">
+            <button id="fechar-configuracoes" class="fechar-configuracoes" style="position:absolute; top:10px; right:12px; border:none; background:none; font-size:20px; font-weight:bold; color:#0b2238; cursor:pointer;">X</button>
+
+            <h2 style="margin:0 0 14px; color:#0b2238; font-size:1.5rem;">Sobre o Dexmon</h2>
+            <p style="margin:0; line-height:1.5; font-size:0.95rem; color:#1a202c;">
+                Sobre o projeto - Digimon Explorer <br>
+                É um site interativo desenvolvido para pesquisar e conhecer o universo dos Digimons. Explore informações, características, evoluções e curiosidades de diversas criaturas digitais em um ambiente simples, intuitivo e funcional.
+                <br><br>
+                <strong>Equipe:</strong><br>
+                - Shara Jayane<br>
+                - Maria Clara<br>
+                - Sofia Sabina<br>
+                - Nataniel Lucena
+                <br><br>
+                <strong>Informações acadêmicas:</strong><br>
+                Instituição: IFRN – Campus Caicó<br>
+                Curso: Técnico em Informática para Internet<br>
+                Turma: 2º ano<br>
+                Professor: Dr. Thales Aguiar
+                <br><br>
+                <strong>Objetivo:</strong><br>
+                Aplicar os conhecimentos de desenvolvimento web na criação de uma plataforma de pesquisa organizada, acessível e interativa.
+            </p>
+        </div>
+    `;
+
+    if (!painel) {
+        const modalHTML = `
+            <div id="painel-configuracoes" class="painel-configuracoes" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:9999;">
+                ${conteudoCompletoHTML}
+            </div>
+        `;
+        document.body.insertAdjacentHTML("beforeend", modalHTML);
+        painel = document.getElementById("painel-configuracoes");
+    } else {
+        painel.style.zIndex = "9999";
+        painel.innerHTML = conteudoCompletoHTML;
+    }
+
+    return painel;
 }
 
-if (fecharConfiguracoes && painelConfiguracoes) {
-    fecharConfiguracoes.addEventListener("click", () => {
-        painelConfiguracoes.style.display = "none";
-    });
-}
+document.addEventListener("DOMContentLoaded", garantirPainelConfiguracoes);
+garantirPainelConfiguracoes();
 
-if (painelConfiguracoes) {
-    painelConfiguracoes.addEventListener("click", e => {
-        if (e.target === painelConfiguracoes) {
-            painelConfiguracoes.style.display = "none";
-        }
-    });
-}
+document.addEventListener("click", e => {
+    const painel = garantirPainelConfiguracoes();
+
+    if (e.target.id === "fechar-configuracoes" || e.target === painel) {
+        painel.style.display = "none";
+        return;
+    }
+
+    const clicouPorId = e.target.closest("#btn-configuracoes");
+    const itemMenu = e.target.closest(".menu-item, button, a, div");
+    const clicouPorTexto =
+        itemMenu &&
+        itemMenu.textContent &&
+        itemMenu.textContent.trim().toLowerCase() === "configurações";
+
+    if (clicouPorId || clicouPorTexto) {
+        e.preventDefault();
+        painel.style.display = "flex";
+    }
+});
 
 // Botão Digimon aleatório
 const btnDigimonAleatorio = document.getElementById("btn-digimon-aleatorio");
